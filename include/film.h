@@ -23,7 +23,7 @@ public:
     img_type = findAttribute(attributes, "img_type").getValue<std::string>();
   };
 
-  Film *Make(std::tuple<std::string, std::vector<Argument>> args)
+  static Film *Make(Arguments args)
   {
     if (get<0>(args) == "film")
     {
@@ -37,4 +37,10 @@ public:
   };
   // virtual Film *Make(Arguments args) = 0;
   ~Film();
+ 
+  friend DerivedRegistrar<Film, Film>;
 };
+
+template <>
+std::vector<Factory<Film,Arguments>::ReadFunPtr> Factory<Film,Arguments>::registeredFuns = std::vector<Factory<Film,Arguments>::ReadFunPtr>();
+DerivedRegistrar<Film,Film> ___initFilm;

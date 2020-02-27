@@ -1,13 +1,16 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <map>
 #include <string>
+#include "argument.h"
 
 using namespace std;
 
-class Camera
-{
-};
+//class Camera
+//{
+//};
 
 // Factory class to produce Base* objects from an int (for simplicity).
 // The class uses a list of registered function pointers, which attempt
@@ -19,17 +22,24 @@ public:
   typedef Base *(*ReadFunPtr)(Args);
 
 private:
-  static inline vector<ReadFunPtr> registeredFuns = vector<ReadFunPtr>();
+  // for some reason it doesn't work if i inline and initialize it
+  // it should work if used with -std=c++17 but seemingly it doesn't
+  static vector<ReadFunPtr> registeredFuns; // = vector<ReadFunPtr>();
 
 public:
   static void registerPtr(ReadFunPtr ptr)
   {
     registeredFuns.push_back(ptr);
+    std::cout << "teste" << std::endl;
+    std::cout << registeredFuns.size() << std::endl;
+    return ;
   }
   static Base *Produce(Args args)
   {
     //	auto value = ptrMap.find(str);
     Base *ptr = NULL;
+    std::cout << "teste2" << std::endl;
+    std::cout << registeredFuns.size() << std::endl;
     for (typename vector<ReadFunPtr>::const_iterator I = registeredFuns.begin(), E = registeredFuns.end(); I != E; ++I)
     {
       ptr = (*I)(args);
@@ -42,11 +52,11 @@ public:
   }
 };
 // initialize vector of funptrs
-using xmlAttribute = tuple<string, string>;
-using Arguments = tuple<string, vector<xmlAttribute>>;
+// using xmlAttribute = tuple<string, string>;
+using Arguments = tuple<string, vector<Argument>>;
 // using Fact = Factory<Camera, Arguments>;
 // template <>
-// std::vector<Fact::ReadFunPtr> Fact::registeredFuns = std::vector<Factory::ReadFunPtr>();
+//std::vector<Factory<Film,Arguments>::ReadFunPtr> Factory<Film,Arguments>::registeredFuns = std::vector<Factory<Film,Arguments>::ReadFunPtr>();
 
 // Register Derived in the Factory so it will attempt to construct objects.
 // This is done by adding the function pointer Derived::ProduceDerivedFromInt
@@ -62,27 +72,29 @@ struct DerivedRegistrar
 
 // An example Derived class, which can be produced from an int=0.
 // The producing method is static to avoid the need for prototype objects.
-class Derived : public Camera
-{
-private:
-  static Camera *Make(Arguments attrs)
-  {
-    if (get<0>(attrs) == "derived")
-      return new Derived();
-    return NULL;
-  }
-
-public:
-  Derived(){};
-
-  // registrar is a friend because we made the producing function private
-  // this is not necessary, may be desirable (e.g. encapsulation)
-  friend DerivedRegistrar<Camera, Derived>;
-};
+//class Derived : public Camera
+//{
+//private:
+//  static Camera *Make(Arguments attrs)
+//  {
+//    if (get<0>(attrs) == "derived")
+//      return new Derived();
+//    return NULL;
+//  }
+//
+//public:
+//  Derived(){};
+//
+//  // registrar is a friend because we made the producing function private
+//  // this is not necessary, may be desirable (e.g. encapsulation)
+//  friend DerivedRegistrar<Camera, Derived>;
+//};
 
 // Registers a function pointer that creates an Object from the Derived class
 // that inherits from the Camera class;
-DerivedRegistrar<Camera, Derived> derived;
+
+//DerivedRegistrar<Camera, Derived> derived;
+
 // string derived = "derived";
 // vector<xmlAttribute> testeVec;
 // Camera *test = Fact::Produce(make_tuple(derived, testeVec));
