@@ -2,7 +2,7 @@
 
 #include "vec3.h"
 #include "argument.h"
-#include "Factory.hpp"
+#include "factory.hpp"
 
 class Camera
 {
@@ -13,11 +13,11 @@ private:
 
 public:
   Camera(){};
-  static Camera *Make(Arguments args){return nullptr;};
+  static Camera *Make(Arguments args) { return nullptr; };
   // Camera(vec3 position, vec3 target, vec3 up) : position(position), target(target), up(up){};
   ~Camera();
 
-//  friend DerivedRegistrar<Camera, Camera>;
+  //  friend DerivedRegistrar<Camera, Camera>;
 };
-
-//DerivedRegistrar<Camera,Camera> ___initCamera;
+template <>
+std::vector<Factory<Camera, Arguments>::ReadFunPtr> Factory<Camera, Arguments>::registeredFuns = std::vector<Factory<Camera, Arguments>::ReadFunPtr>();
