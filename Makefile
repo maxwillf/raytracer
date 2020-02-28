@@ -1,7 +1,7 @@
 Target = raytracer 
 INCLUDES = include
 CXX = g++
-CXXFLAGS = -W -std=c++11 -g -ggdb -I $(INCLUDES)
+CXXFLAGS = -W -std=c++17 -g -ggdb -I $(INCLUDES)
 DOCS = docs 
 SRCDIR = src
 OBJDIR = obj
