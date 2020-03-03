@@ -14,6 +14,7 @@
 #include "background.h"
 #include "film.h"
 #include "tinyxml2.h"
+#include <omp.h>
 
 #include <fstream>
 
@@ -74,9 +75,10 @@ int main(void)
 
   int height = producedFilm->getHeight();
   int width = producedFilm->getWidth();
-  for (size_t h = 0; h < height; h++)
+#pragma omp parallel for collapse(2)
+  for (int h = 0; h < height; h++)
   {
-    for (size_t w = 0; w < width; w++)
+    for (int w = 0; w < width; w++)
     {
       double i = double(h) / height;
       double j = double(w) / width;
