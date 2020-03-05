@@ -40,8 +40,6 @@ public:
       return nullptr;
     }
   };
-  // virtual Film *Make(Arguments args) = 0;
-  ~Film();
 
   friend DerivedRegistrar<Film, Film>;
 };

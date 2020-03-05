@@ -12,7 +12,7 @@ public:
 
   static Camera *Make(Arguments args)
   {
-    if (get<0>(args) == "orthographic")
+    if (get<1>(args)[0].getKey() == "orthographic")
     {
       return new OrtographicCamera();
     }

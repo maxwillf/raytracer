@@ -81,8 +81,6 @@ public:
       return nullptr;
     }
   }
-  // Background(vec3 position, vec3 target, vec3 up) : position(position), target(target), up(up){};
-  ~Background();
 
   friend DerivedRegistrar<Background, Background>;
 };
