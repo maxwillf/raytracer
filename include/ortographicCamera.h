@@ -12,7 +12,7 @@ public:
 
   static Camera *Make(Arguments args)
   {
-    if (get<1>(args)[0].getKey() == "orthographic")
+    if (get<1>(args)[0].getValue<std::string>() == "orthographic")
     {
       return new OrtographicCamera();
     }
@@ -24,5 +24,3 @@ public:
   // ~OrtographicCamera();
   friend DerivedRegistrar<Camera, OrtographicCamera>;
 };
-
-DerivedRegistrar<Camera, OrtographicCamera> __initOrtographic;

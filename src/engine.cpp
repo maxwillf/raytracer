@@ -96,11 +96,6 @@ Engine::Engine(std::string path)
   {
     readArguments(node);
     node = node->NextSiblingElement();
-    std::string nodeName = node->Value();
-    if (nodeName == "world_begin")
-    {
-      node = node->FirstChildElement();
-    }
   }
 }
 
@@ -109,13 +104,6 @@ void Engine::readArguments(tinyxml2::XMLElement *element)
   std::string elemName = element->Value();
   auto attribute = element->FirstAttribute();
   std::vector<Argument> arg;
-
-  if (elemName == "camera")
-  {
-    const tinyxml2::XMLAttribute* type = element->FindAttribute("type");
-    //auto cameraType = std::string(element->Attribute("type"));
-    arg.push_back(Argument(type));
-  }
 
   while (attribute != nullptr)
   {

@@ -1,5 +1,8 @@
+#pragma once
+
 #include "tinyxml2.h"
 #include "camera.h"
+#include "ortographicCamera.h"
 #include "background.h"
 #include "film.h"
 #include <iostream> 
