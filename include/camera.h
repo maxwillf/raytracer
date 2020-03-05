@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CAMERA__
+#define __CAMERA__
 
 #include "vec3.h"
 #include "argument.h"
@@ -19,5 +20,5 @@ public:
 
   //  friend DerivedRegistrar<Camera, Camera>;
 };
-template <>
-std::vector<Factory<Camera, Arguments>::ReadFunPtr> Factory<Camera, Arguments>::registeredFuns = std::vector<Factory<Camera, Arguments>::ReadFunPtr>();
+
+#endif

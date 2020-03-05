@@ -1,4 +1,6 @@
 #pragma once
+#ifndef __BACKGROUND__
+#define __BACKGROUND__
 
 #include "vec3.h"
 #include "argument.h"
@@ -19,7 +21,7 @@ private:
 public:
   Background(){};
   vec3 getColor() { return color; };
-  vec3 getColor(double i, double j)
+  vec3 getColor(float i, float j)
   {
     vec3 xVal = (tl * (1 - i) + bl * i);
     vec3 yVal = (tr * (1 - i) + br * i);
@@ -43,7 +45,7 @@ public:
       }
       if (attr.getKey() == "color")
       {
-        color = vec3(attr.getValues<double>());
+        color = vec3(attr.getValues<float>());
       }
       if (attr.getKey() == "mapping")
       {
@@ -51,19 +53,19 @@ public:
       }
       if (attr.getKey() == "bl")
       {
-        bl = attr.getValues<double>();
+        bl = attr.getValues<float>();
       }
       if (attr.getKey() == "br")
       {
-        br = attr.getValues<double>();
+        br = attr.getValues<float>();
       }
       if (attr.getKey() == "tl")
       {
-        tl = attr.getValues<double>();
+        tl = attr.getValues<float>();
       }
       if (attr.getKey() == "tr")
       {
-        tr = attr.getValues<double>();
+        tr = attr.getValues<float>();
       }
       // std::cout << attr.getKey() << std::endl;
     }
@@ -84,6 +86,5 @@ public:
 
   friend DerivedRegistrar<Background, Background>;
 };
-template <>
-std::vector<Factory<Background, Arguments>::ReadFunPtr> Factory<Background, Arguments>::registeredFuns = std::vector<Factory<Background, Arguments>::ReadFunPtr>();
-DerivedRegistrar<Background, Background> ___initBg;
+
+#endif

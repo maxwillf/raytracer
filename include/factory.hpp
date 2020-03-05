@@ -49,7 +49,7 @@ public:
 };
 // initialize vector of funptrs
 // using xmlAttribute = tuple<string, string>;
-using Arguments = tuple<string, vector<Argument>>;
+//using Arguments = tuple<string, vector<Argument>>;
 // using Fact = Factory<Camera, Arguments>;
 // template <>
 //std::vector<Factory<Film,Arguments>::ReadFunPtr> Factory<Film,Arguments>::registeredFuns = std::vector<Factory<Film,Arguments>::ReadFunPtr>();

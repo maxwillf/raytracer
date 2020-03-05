@@ -1,3 +1,5 @@
+#pragma once
+
 #include "factory.hpp"
 #include "argument.h"
 #include <algorithm>
@@ -43,7 +45,3 @@ public:
 
   friend DerivedRegistrar<Film, Film>;
 };
-
-template <>
-std::vector<Factory<Film, Arguments>::ReadFunPtr> Factory<Film, Arguments>::registeredFuns = std::vector<Factory<Film, Arguments>::ReadFunPtr>();
-DerivedRegistrar<Film, Film> ___initFilm;
