@@ -1,9 +1,15 @@
 #include "engine.h"
 
-int main(void)
+
+int main(int argc, char** argv)
 {
-  Engine engine("resources/bilinear.xml");
+  if(argc != 3){
+    std::cerr << "Wrong amount of arguments, please insert a valid xml file name and the output file name" << std::endl;
+    exit(-1);
+  }
+
+  Engine engine(argv[1]);
   engine.render();
-  engine.writeToFile("blablabla.ppm");
+  engine.writeToFile(argv[2]);
   return 0;
 }
