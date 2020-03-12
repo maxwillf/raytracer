@@ -2,33 +2,52 @@
 
 void Engine::render()
 {
-  for(auto&& arg : args){
+  std::shared_ptr<Film> filmPtr = nullptr;
+  Arguments lookat = std::make_tuple<std::string, std::vector<Argument>>(std::string(), std::vector<Argument>());
+  for (auto &&arg : args)
+  {
     std::string tagName = get<0>(arg);
     auto constructionArguments = get<1>(arg);
-    auto produceArgs = std::make_tuple(tagName,constructionArguments);
-    if(tagName == "camera"){
+    auto produceArgs = std::make_tuple(tagName, constructionArguments);
+    if (tagName == "camera")
+    {
       this->camera = std::shared_ptr<Camera>(Factory<Camera, Arguments>::Produce(produceArgs));
     }
-    if(tagName == "film"){
-      this->film = std::shared_ptr<Film>(Factory<Film, Arguments>::Produce(produceArgs));
+    if (tagName == "film")
+    {
+      filmPtr = std::shared_ptr<Film>(Factory<Film, Arguments>::Produce(produceArgs));
     }
-    if(tagName == "background"){
+    if (tagName == "lookat")
+    {
+      lookat = arg;
+    }
+    if (tagName == "background")
+    {
       this->background = std::shared_ptr<Background>(Factory<Background, Arguments>::Produce(produceArgs));
     }
   }
-  int height = this->film->getHeight();
-  int width = this->film->getWidth();
+  if (!get<1>(lookat).empty())
+  {
+    camera->setFrame(lookat);
+  }
+  if (filmPtr != nullptr)
+  {
+    camera->setFilm(filmPtr);
+  }
+
+  int height = camera->film->getHeight();
+  int width = camera->film->getWidth();
   buffer = std::vector<std::vector<vec3>>(height, std::vector<vec3>(width));
-  #pragma omp parallel for collapse(2)
-    for (int h = 0; h < height; h++)
+#pragma omp parallel for collapse(2)
+  for (int h = 0; h < height; h++)
+  {
+    for (int w = 0; w < width; w++)
     {
-      for (int w = 0; w < width; w++)
-      {
-        float i = float(h) / height;
-        float j = float(w) / width;
-        buffer[h][w] = this->background->getColor(i, j);
-      }
+      float i = float(h) / height;
+      float j = float(w) / width;
+      buffer[h][w] = this->background->getColor(i, j);
     }
+  }
 }
 
 void Engine::writeToFile(std::string path)
@@ -111,8 +130,8 @@ void Engine::readArguments(tinyxml2::XMLElement *element)
     attribute = attribute->Next();
   };
 
-    Arguments currentArgs = std::make_tuple(elemName, arg);
-    this->args.push_back(currentArgs);
+  Arguments currentArgs = std::make_tuple(elemName, arg);
+  this->args.push_back(currentArgs);
 }
 Engine::~Engine()
 {

@@ -3,9 +3,7 @@
 class OrtographicCamera : Camera
 {
 private:
-  // vec3 position;
-  // vec3 target;
-  // vec3 up;
+  std::vector<float> screenWindow;
 
 public:
   OrtographicCamera(){};

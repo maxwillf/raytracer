@@ -10,6 +10,8 @@ private:
   int xres;
   int yres;
   string type;
+  std::vector<int> cropWindow;
+  bool gammaCorrected;
   string filename; // auto it = std::find_if(attributes.begin(), attributes.end(), [](xmlAttribute attr) {
                    //   return get<0>(attr) == "xres";
                    // });

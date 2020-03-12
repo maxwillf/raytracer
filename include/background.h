@@ -23,9 +23,16 @@ public:
   vec3 getColor() { return color; };
   vec3 getColor(float i, float j)
   {
-    vec3 xVal = (tl * (1 - i) + bl * i);
-    vec3 yVal = (tr * (1 - i) + br * i);
-    return xVal * (1 - j) + yVal * j;
+    if (color.squared_length() != 0)
+    {
+      return color;
+    }
+    else
+    {
+      vec3 xVal = (tl * (1 - i) + bl * i);
+      vec3 yVal = (tr * (1 - i) + br * i);
+      return xVal * (1 - j) + yVal * j;
+    }
   }
   Background(vector<Argument> attributes)
   {

@@ -5,8 +5,8 @@
 #include "ortographicCamera.h"
 #include "background.h"
 #include "film.h"
-#include <iostream> 
-#include <fstream> 
+#include <iostream>
+#include <fstream>
 #include <memory>
 #include "vec3.h"
 #include "argument.h"
@@ -15,7 +15,6 @@ class Engine
 {
 private:
   std::shared_ptr<Camera> camera;
-  std::shared_ptr<Film> film;
   std::shared_ptr<Background> background;
   std::vector<std::vector<vec3>> buffer;
 

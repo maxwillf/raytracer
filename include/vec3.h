@@ -187,4 +187,6 @@ inline vec3 unit_vector(vec3 v)
   return v / v.length();
 }
 
+using Point = vec3;
+
 #endif
