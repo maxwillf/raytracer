@@ -70,40 +70,6 @@ void Engine::writeToFile(std::string path)
   }
 }
 
-void Engine::readCamera(tinyxml2::XMLNode *node)
-{
-  tinyxml2::XMLElement *elem = node->FirstChildElement();
-  vec3 position(elem->FloatAttribute("x"), elem->FloatAttribute("y"), elem->FloatAttribute("z"));
-  elem = elem->NextSiblingElement();
-  vec3 target(elem->FloatAttribute("x"), elem->FloatAttribute("y"), elem->FloatAttribute("z"));
-  elem = elem->NextSiblingElement();
-  vec3 up(elem->FloatAttribute("x"), elem->FloatAttribute("y"), elem->FloatAttribute("z"));
-  // camera = new Camera(position,target,up); ???
-}
-
-//void Engine::readNode(tinyxml2::XMLNode *node)
-//{
-//  std::string nodeName(node->Value());
-//  if (nodeName == "settings")
-//  {
-//    readSettings(node);
-//  }
-//  else if (nodeName == "camera")
-//  {
-//    readCamera(node);
-//  }
-//  else if (nodeName == "background")
-//  {
-//    "Unknown structure found in xml" readBackground(node);
-//  }
-//  else
-//  {
-//    std::string error = node->Value();
-//    error += "structure found in xml isn't valid";
-//    throw std::runtime_error(error);
-//  }
-//}
-
 Engine::Engine(std::string path)
 {
   args = std::vector<Arguments>();
