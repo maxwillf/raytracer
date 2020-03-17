@@ -5,6 +5,7 @@
 #include "vec3.h"
 #include "argument.h"
 #include "factory.hpp"
+#include "lodepng.h"
 
 class Background
 {
@@ -17,6 +18,8 @@ private:
   vec3 br;
   vec3 tl;
   vec3 tr;
+
+  std::vector<std::vector<vec3>> image;
 
 public:
   Background(){};
@@ -33,6 +36,36 @@ public:
       vec3 yVal = (tr * (1 - i) + br * i);
       return xVal * (1 - j) + yVal * j;
     }
+  }
+
+  void loadBgFromFilename(std::string path)
+  {
+    std::vector<unsigned char> image;
+    unsigned int width, height;
+    std::cout << path << std::endl;
+    unsigned error = lodepng::decode(image, width, height, path);
+    if (error)
+    {
+      std::cout << "rip" << std::endl;
+    }
+    else
+    {
+      size_t imageLen = image.size();
+      this->image = std::vector<std::vector<vec3>>(height,std::vector<vec3>(width));
+      int imageIndex = 0;
+      if (imageLen % 3 == 0)
+      {
+        for (size_t i = 0; i < height; i++)
+        {
+          for (size_t j = 0; j < width; j++)
+          {
+            this->image[height][width] = vec3{image[imageIndex], image[imageIndex+1], image[imageIndex+2]};
+            imageIndex +=3;
+          }
+        }
+      }
+    }
+    std::cout << image.size() << std::endl;
   }
   Background(vector<Argument> attributes)
   {
@@ -74,7 +107,10 @@ public:
       {
         tr = attr.getValues<float>();
       }
-      // std::cout << attr.getKey() << std::endl;
+      if (attr.getKey() == "filename")
+      {
+        loadBgFromFilename(attr.getValue<std::string>());
+      }
     }
   }
   static Background *Make(Arguments args)

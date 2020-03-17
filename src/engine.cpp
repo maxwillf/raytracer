@@ -29,12 +29,13 @@ void Engine::render()
   if (!get<1>(lookat).empty())
   {
     camera->setFrame(lookat);
+    std::cout << "sets" << std::endl;
   }
   if (filmPtr != nullptr)
   {
+  std::cout << "sets" << std::endl;
     camera->setFilm(filmPtr);
   }
-
   int height = camera->film->getHeight();
   int width = camera->film->getWidth();
   buffer = std::vector<std::vector<vec3>>(height, std::vector<vec3>(width));

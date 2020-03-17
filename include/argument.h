@@ -2,6 +2,7 @@
 #ifndef __ARGUMENT__
 #define __ARGUMENT__
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -24,6 +25,14 @@ public:
 
   template <typename T>
   std::vector<T> getValues(){};
+
+  void print(){
+    std::cout << argumentKey << std::endl;
+    for (auto &&arg : values )
+    {
+      std::cout << arg << std::endl;
+    }
+  }
 };
 
 Argument findAttribute(std::vector<Argument> attributes, std::string attrName);

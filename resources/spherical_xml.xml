@@ -1,0 +1,11 @@
+<RT3>
+    <lookat look_from="0 0 0" look_at="0 -10 10" up="0 1 0" />
+    <camera type="perspective" fovy="110" /> <!--  screen_window="-5.3 5.3 -4 4" /> -->
+    <film type="image" x_res="800" y_res="800"
+        filename="spherical.png" img_type="png" gamma_corrected="no" />
+
+    <world_begin/>
+        <background type="texture" mapping="spherical" filename="../test_scene/textures/grid.png" /> 
+    <world_end/>
+
+</RT3>
