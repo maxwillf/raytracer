@@ -53,19 +53,26 @@ public:
       size_t imageLen = image.size();
       this->image = std::vector<std::vector<vec3>>(height,std::vector<vec3>(width));
       int imageIndex = 0;
-      if (imageLen % 3 == 0)
+      if (imageLen % 4 == 0)
       {
         for (size_t i = 0; i < height; i++)
         {
           for (size_t j = 0; j < width; j++)
           {
-            this->image[height][width] = vec3{image[imageIndex], image[imageIndex+1], image[imageIndex+2]};
-            imageIndex +=3;
+            this->image[i][j] = vec3{image[imageIndex], image[imageIndex+1], image[imageIndex+2]};
+            //std::cout << image[imageIndex] << std::endl;
+            //std::cout << this->image[i][j] << std::endl;
+            // avançar 4 indices invés de 3 porque imagens png tem rgb e alpha
+            imageIndex +=4;
           }
         }
       }
+      else {
+        std::cerr << "Image had malformed pixels, the amount of bytes wasn't a multiple of 3" << std::endl;
+        exit(-1);
+      }
     }
-    std::cout << image.size() << std::endl;
+    //std::cout << image.size() << std::endl;
   }
   Background(vector<Argument> attributes)
   {

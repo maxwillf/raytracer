@@ -29,11 +29,9 @@ void Engine::render()
   if (!get<1>(lookat).empty())
   {
     camera->setFrame(lookat);
-    std::cout << "sets" << std::endl;
   }
   if (filmPtr != nullptr)
   {
-  std::cout << "sets" << std::endl;
     camera->setFilm(filmPtr);
   }
   int height = camera->film->getHeight();
