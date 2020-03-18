@@ -3,6 +3,7 @@
 
 #include "vec3.h"
 #include "film.h"
+#include "ray.h"
 #include "argument.h"
 #include <memory>
 #include "factory.hpp"
@@ -17,8 +18,14 @@ public:
   vec3 u;
   vec3 v;
   Point e;
+  std::vector<float> screenWindow;
 
-  Camera(){};
+  virtual Ray generate_ray(int x, int y) = 0;
+
+  Camera()
+  {
+    screenWindow = std::vector<float>{-1.555, 1.555, -1, 1};
+  };
   static Camera *Make(Arguments args) { return nullptr; };
   void setFilm(std::shared_ptr<Film> film)
   {

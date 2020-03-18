@@ -44,7 +44,7 @@ void Engine::render()
     {
       float i = float(h) / height;
       float j = float(w) / width;
-      buffer[h][w] = this->background->getColor(i, j);
+      buffer[h][w] = this->background->getColor(j, i);
     }
   }
 }

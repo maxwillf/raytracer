@@ -10,8 +10,14 @@
 class Background
 {
 private:
+  enum class ScreenMapping
+  {
+    screen,
+    spherical,
+  };
+
   string type;
-  string mapping;
+  ScreenMapping mapping;
   string filename;
   vec3 color;
   vec3 bl;
@@ -26,15 +32,37 @@ public:
   vec3 getColor() { return color; };
   vec3 getColor(float i, float j)
   {
-    if (color.squared_length() != 0)
+    if (!image.empty())
     {
-      return color;
+      switch (mapping)
+      {
+      case ScreenMapping::screen:
+      {
+        int height = image.size();
+        int width = image[0].size();
+        int newX = width * i;
+        int newY = height * j;
+        //        std::cout << newX << " " << newY << std::endl;
+        return vec3(this->image[newY][newX]);
+      }
+
+      case ScreenMapping::spherical:
+        break;
+      }
     }
     else
     {
-      vec3 xVal = (tl * (1 - i) + bl * i);
-      vec3 yVal = (tr * (1 - i) + br * i);
-      return xVal * (1 - j) + yVal * j;
+
+      if (color.squared_length() != 0)
+      {
+        return color;
+      }
+      else
+      {
+        vec3 xVal = (tl * (1 - i) + bl * i);
+        vec3 yVal = (tr * (1 - i) + br * i);
+        return xVal * (1 - j) + yVal * j;
+      }
     }
   }
 
@@ -46,12 +74,13 @@ public:
     unsigned error = lodepng::decode(image, width, height, path);
     if (error)
     {
-      std::cout << "rip" << std::endl;
+      std::cerr << "Failed to load xml png file, please check if the path was correct" << std::endl;
+      exit(-1);
     }
     else
     {
       size_t imageLen = image.size();
-      this->image = std::vector<std::vector<vec3>>(height,std::vector<vec3>(width));
+      this->image = std::vector<std::vector<vec3>>(height, std::vector<vec3>(width));
       int imageIndex = 0;
       if (imageLen % 4 == 0)
       {
@@ -59,15 +88,14 @@ public:
         {
           for (size_t j = 0; j < width; j++)
           {
-            this->image[i][j] = vec3{image[imageIndex], image[imageIndex+1], image[imageIndex+2]};
-            //std::cout << image[imageIndex] << std::endl;
-            //std::cout << this->image[i][j] << std::endl;
+            this->image[i][j] = vec3{image[imageIndex], image[imageIndex + 1], image[imageIndex + 2]};
             // avançar 4 indices invés de 3 porque imagens png tem rgb e alpha
-            imageIndex +=4;
+            imageIndex += 4;
           }
         }
       }
-      else {
+      else
+      {
         std::cerr << "Image had malformed pixels, the amount of bytes wasn't a multiple of 3" << std::endl;
         exit(-1);
       }
@@ -77,7 +105,6 @@ public:
   Background(vector<Argument> attributes)
   {
     type = "colors";
-    mapping = "screen";
     color = vec3(0.0, 0.0, 0.0);
     bl = vec3(0.0, 0.0, 0.0);
     br = vec3(0.0, 0.0, 0.0);
@@ -86,6 +113,7 @@ public:
 
     for (auto &&attr : attributes)
     {
+      std::cout << attr.getKey() << std::endl;
       if (attr.getKey() == "type")
       {
         type = attr.getValue<std::string>();
@@ -96,7 +124,20 @@ public:
       }
       if (attr.getKey() == "mapping")
       {
-        mapping = attr.getValue<std::string>();
+        std::string mappingAttr = attr.getValue<std::string>();
+        if (mappingAttr == "screen")
+        {
+          mapping = ScreenMapping::screen;
+        }
+        else if (mappingAttr == "spherical")
+        {
+          mapping = ScreenMapping::spherical;
+        }
+        else
+        {
+          std::cerr << "Wrong mapping type input for background" << std::endl;
+          exit(-1);
+        }
       }
       if (attr.getKey() == "bl")
       {
