@@ -42,9 +42,10 @@ void Engine::render()
   {
     for (int w = 0; w < width; w++)
     {
-      float i = float(h) / height;
-      float j = float(w) / width;
-      buffer[h][w] = this->background->getColor(j, i);
+      float j = float(h) / height;
+      float i = float(w) / width;
+      Ray ray = camera->generate_ray(h, w);
+      buffer[h][w] = this->background->getColor(i, j, ray);
     }
   }
 }

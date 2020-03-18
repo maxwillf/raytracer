@@ -3,6 +3,11 @@
 #define __BACKGROUND__
 
 #include "vec3.h"
+#include "math.h"
+
+#define PI 3.14159265
+
+#include "ray.h"
 #include "argument.h"
 #include "factory.hpp"
 #include "lodepng.h"
@@ -30,7 +35,7 @@ private:
 public:
   Background(){};
   vec3 getColor() { return color; };
-  vec3 getColor(float i, float j)
+  vec3 getColor(float i, float j, Ray ray)
   {
     if (!image.empty())
     {
@@ -47,6 +52,22 @@ public:
       }
 
       case ScreenMapping::spherical:
+        Point pointInRay = ray(1.0);
+        // correção dos eixos x,y z
+        Point p = Point(-pointInRay[0], pointInRay[2], pointInRay[1]);
+        double convertFromRadians = 180.0 / PI;
+        float radius = p.length();
+        float phi = atan2(p[1], p[0]) * convertFromRadians;
+        float theta = acos(p[2] / radius) * convertFromRadians;
+        float newU = phi / 360.0;
+        float newV = theta / 180.0;
+
+        float height = image.size();
+        float width = image[0].size();
+        int newX = abs(width * newU);
+        int newY = abs(height * newV);
+        //        std::cout << newX << " " << newY << std::endl;
+        return vec3(this->image[newY][newX]);
         break;
       }
     }
@@ -59,9 +80,9 @@ public:
       }
       else
       {
-        vec3 xVal = (tl * (1 - i) + bl * i);
-        vec3 yVal = (tr * (1 - i) + br * i);
-        return xVal * (1 - j) + yVal * j;
+        vec3 xVal = (tl * (1 - j) + bl * j);
+        vec3 yVal = (tr * (1 - j) + br * j);
+        return xVal * (1 - i) + yVal * i;
       }
     }
   }

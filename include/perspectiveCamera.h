@@ -13,8 +13,8 @@ public:
 
   Ray generate_ray(int x, int y)
   {
-    float u = screenWindow[0] + (screenWindow[1] - screenWindow[0]) * (x + 0.5) / film->getWidth();
-    float v = screenWindow[3] + (screenWindow[4] - screenWindow[3]) * (y + 0.5) / film->getHeight();
+    float u = screenWindow[0] + (screenWindow[1] - screenWindow[0]) * (float(x) + 0.5) / float(film->getWidth());
+    float v = screenWindow[3] + (screenWindow[4] - screenWindow[3]) * (float(y) + 0.5) / float(film->getHeight());
     return Ray(this->e, this->w + u * this->u + v * this->v);
   }
 
