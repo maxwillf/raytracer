@@ -10,6 +10,7 @@
 #include <memory>
 #include "vec3.h"
 #include "argument.h"
+#include "primitive.h"
 
 class Engine
 {
@@ -17,6 +18,7 @@ private:
   std::shared_ptr<Camera> camera;
   std::shared_ptr<Background> background;
   std::vector<std::vector<vec3>> buffer;
+  std::vector<shared_ptr<Primitive>> obj_list;
 
   std::vector<Arguments> args;
 

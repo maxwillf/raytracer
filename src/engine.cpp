@@ -25,6 +25,10 @@ void Engine::render()
     {
       this->background = std::shared_ptr<Background>(Factory<Background, Arguments>::Produce(produceArgs));
     }
+    if (tagName == "object")
+    {
+      obj_list.push_back(std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs)));
+    }
   }
   if (!get<1>(lookat).empty())
   {
@@ -44,10 +48,20 @@ void Engine::render()
     {
       float j = float(h) / height;
       float i = float(w) / width;
-      Ray ray = camera->generate_ray(h, w);
+      Ray ray = camera->generate_ray(w, h);
       buffer[h][w] = this->background->getColor(i, j, ray);
+      for (const shared_ptr<Primitive> &p : obj_list)
+      {
+        if (p->intersect_p(ray))
+        {
+          // std::cout << p << std::endl;
+          buffer[h][w] = vec3(255, 0, 0);
+        }
+      }
     }
   }
+
+  writeToFile(camera->film->getFilename());
 }
 
 void Engine::writeToFile(std::string path)

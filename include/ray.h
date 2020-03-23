@@ -11,6 +11,8 @@ public:
   {
     return o + d * t;
   }
+  vec3 origin() const { return o; }
+  vec3 direction() const { return d; }
 
 private:
   vec3 o; //!< origin

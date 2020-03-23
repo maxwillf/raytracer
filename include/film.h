@@ -29,6 +29,7 @@ public:
 
   int getWidth() { return xres; }
   int getHeight() { return yres; }
+  std::string getFilename() { return filename; }
 
   static Film *Make(Arguments args)
   {

@@ -7,6 +7,7 @@
 #include "argument.h"
 #include <memory>
 #include "factory.hpp"
+#include "algorithm"
 
 class Camera
 {
@@ -24,12 +25,17 @@ public:
 
   Camera()
   {
-    screenWindow = std::vector<float>{-1.555, 1.555, -1, 1};
+    screenWindow = std::vector<float>{-1.333, 1.333, -1, 1};
   };
   static Camera *Make(Arguments args) { return nullptr; };
   void setFilm(std::shared_ptr<Film> film)
   {
     this->film = film;
+
+    float xratio, yratio;
+    yratio = std::max(film->getHeight(), film->getWidth()) / float(film->getWidth());
+    xratio = std::max(film->getHeight(), film->getWidth()) / float(film->getHeight());
+    screenWindow = std::vector<float>{-xratio, xratio, -yratio, yratio};
   }
   void setFrame(Arguments args)
   {

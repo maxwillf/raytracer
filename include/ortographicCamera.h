@@ -7,12 +7,21 @@ private:
   // l r b t
 
 public:
-  OrtographicCamera(){};
+  OrtographicCamera(std::vector<Argument> args)
+  {
+    for (auto &&arg : args)
+    {
+      if (arg.getKey() == "screen_window")
+      {
+        screenWindow = arg.getValues<float>();
+      }
+    }
+  };
 
   Ray generate_ray(int x, int y)
   {
-    float u = screenWindow[0] + (screenWindow[1] - screenWindow[0]) * (x + 0.5) / film->getWidth();
-    float v = screenWindow[3] + (screenWindow[4] - screenWindow[3]) * (y + 0.5) / film->getHeight();
+    float u = screenWindow[0] + (x + 0.5) * (screenWindow[1] - screenWindow[0]) / film->getWidth();
+    float v = screenWindow[2] + (y + 0.5) * (screenWindow[3] - screenWindow[2]) / film->getHeight();
     return Ray(this->e + u * this->u + v * this->v, this->w);
   }
 
@@ -20,15 +29,7 @@ public:
   {
     if (get<1>(args)[0].getValue<std::string>() == "orthographic")
     {
-      OrtographicCamera *camera = new OrtographicCamera();
-      for (auto &&arg : get<1>(args))
-      {
-        if (arg.getKey() == "screen_window")
-        {
-          camera->screenWindow = arg.getValues<float>();
-        }
-      }
-      return camera;
+      return new OrtographicCamera(get<1>(args));
     }
     else
     {

@@ -5,7 +5,7 @@
         filename="spherical.png" img_type="png" gamma_corrected="no" />
 
     <world_begin/>
-        <background type="texture" mapping="screen" filename="../images/grid.png" /> 
+        <background type="texture" mapping="screen" filename="images/grid.png" /> 
     <world_end/>
 
 </RT3>

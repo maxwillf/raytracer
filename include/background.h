@@ -6,6 +6,7 @@
 #include "math.h"
 
 #define PI 3.14159265
+#define radToDegrees(x) 180 / PI *x
 
 #include "ray.h"
 #include "argument.h"
@@ -54,11 +55,11 @@ public:
       case ScreenMapping::spherical:
         Point pointInRay = ray(1.0);
         // correção dos eixos x,y z
-        Point p = Point(-pointInRay[0], pointInRay[2], pointInRay[1]);
+        Point p = unit_vector(Point(-pointInRay[1], -pointInRay[0], pointInRay[2]));
         double convertFromRadians = 180.0 / PI;
         float radius = p.length();
-        float phi = atan2(p[1], p[0]) * convertFromRadians;
-        float theta = acos(p[2] / radius) * convertFromRadians;
+        float phi = radToDegrees(atan2(p[1], p[0]) + PI);
+        float theta = radToDegrees(acos(p[2] / radius));
         float newU = phi / 360.0;
         float newV = theta / 180.0;
 
