@@ -19,7 +19,7 @@ public:
   void setFilm(std::shared_ptr<Film> film) override
   {
     this->film = film;
-    float h = tan(fovy);
+    float h = tan(fovy / 2);
     float aspectRatio = (float)film->getWidth() / (float)film->getHeight();
 
     std::cout << h << " " << aspectRatio << std::endl;
