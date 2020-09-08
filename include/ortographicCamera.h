@@ -37,5 +37,19 @@ public:
     }
   };
   // ~OrtographicCamera();
+  void setFilm(std::shared_ptr<Film> film)
+  {
+    this->film = film;
+
+    if (screenWindow.empty())
+    {
+
+      float xratio, yratio;
+      yratio = std::max(film->getHeight(), film->getWidth()) / float(film->getWidth());
+      xratio = std::max(film->getHeight(), film->getWidth()) / float(film->getHeight());
+      screenWindow = std::vector<float>{-xratio, xratio, -yratio, yratio};
+    }
+    std::cout << "common setFilm" << std::endl;
+  }
   friend DerivedRegistrar<Camera, OrtographicCamera>;
 };

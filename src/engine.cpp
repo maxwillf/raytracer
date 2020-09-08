@@ -37,7 +37,12 @@ void Engine::render()
   }
   if (filmPtr != nullptr)
   {
+    std::cout << "setting film" << std::endl;
     camera->setFilm(filmPtr);
+  }
+  else
+  {
+    std::cout << "nullptr film" << std::endl;
   }
 
   int height = camera->film->getHeight();

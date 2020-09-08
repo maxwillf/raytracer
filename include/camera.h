@@ -25,7 +25,7 @@ public:
 
   Camera(){};
   static Camera *Make(Arguments args) { return nullptr; };
-  void setFilm(std::shared_ptr<Film> film)
+  virtual void setFilm(std::shared_ptr<Film> film)
   {
     this->film = film;
 
@@ -37,6 +37,7 @@ public:
       xratio = std::max(film->getHeight(), film->getWidth()) / float(film->getHeight());
       screenWindow = std::vector<float>{-xratio, xratio, -yratio, yratio};
     }
+    std::cout << "common setFilm" << std::endl;
   }
   void setFrame(Arguments args)
   {
