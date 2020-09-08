@@ -23,19 +23,20 @@ public:
 
   virtual Ray generate_ray(int x, int y) = 0;
 
-  Camera()
-  {
-    screenWindow = std::vector<float>{-1.333, 1.333, -1, 1};
-  };
+  Camera(){};
   static Camera *Make(Arguments args) { return nullptr; };
   void setFilm(std::shared_ptr<Film> film)
   {
     this->film = film;
 
-    float xratio, yratio;
-    yratio = std::max(film->getHeight(), film->getWidth()) / float(film->getWidth());
-    xratio = std::max(film->getHeight(), film->getWidth()) / float(film->getHeight());
-    screenWindow = std::vector<float>{-xratio, xratio, -yratio, yratio};
+    if (screenWindow.empty())
+    {
+
+      float xratio, yratio;
+      yratio = std::max(film->getHeight(), film->getWidth()) / float(film->getWidth());
+      xratio = std::max(film->getHeight(), film->getWidth()) / float(film->getHeight());
+      screenWindow = std::vector<float>{-xratio, xratio, -yratio, yratio};
+    }
   }
   void setFrame(Arguments args)
   {

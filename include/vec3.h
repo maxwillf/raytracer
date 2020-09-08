@@ -57,6 +57,8 @@ public:
   inline vec3 &operator/=(const vec3 &v2);
   inline vec3 &operator*=(const float t);
   inline vec3 &operator/=(const float t);
+  inline bool operator==(vec3 const &v) const;
+  inline bool operator!=(vec3 const &v) const;
 
   inline float length() const { return sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]); }
   inline float squared_length() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
@@ -180,6 +182,23 @@ inline vec3 &vec3::operator/=(const float t)
   e[1] *= k;
   e[2] *= k;
   return *this;
+}
+
+inline bool vec3::operator==(vec3 const &v) const
+{
+  for (size_t i = 0; i < 3; i++)
+  {
+    if (e[i] != v[i])
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+inline bool vec3::operator!=(vec3 const &v) const
+{
+  return !(*this == v);
 }
 
 inline vec3 unit_vector(vec3 v)

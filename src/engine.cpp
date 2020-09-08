@@ -39,24 +39,30 @@ void Engine::render()
   {
     camera->setFilm(filmPtr);
   }
+
   int height = camera->film->getHeight();
   int width = camera->film->getWidth();
   buffer = std::vector<std::vector<vec3>>(height, std::vector<vec3>(width));
+
 #pragma omp parallel for collapse(2)
-  for (int h = 0; h < height; h++)
+  for (int h = height - 1; h >= 0; h--)
   {
     for (int w = 0; w < width; w++)
     {
       float j = float(h) / height;
       float i = float(w) / width;
       Ray ray = camera->generate_ray(w, h);
-      buffer[h][w] = this->background->getColor(i, j, ray);
+      //std::cout << ray.direction() << " " << ray.origin() << std::endl;
+      if (buffer[h][w] != vec3(255, 0, 0))
+      {
+        buffer[h][w] = this->background->getColor(i, j, ray);
+      }
       for (const shared_ptr<Primitive> &p : obj_list)
       {
         if (p->intersect_p(ray))
         {
           // std::cout << p << std::endl;
-          buffer[h][w] = vec3(255, 0, 0);
+          buffer[height - 1 - h][w] = vec3(255, 0, 0);
         }
       }
     }
