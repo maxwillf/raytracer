@@ -11,6 +11,7 @@
 #include "vec3.h"
 #include "argument.h"
 #include "primitive.h"
+#include "sphere.h"
 
 class Engine
 {
@@ -27,7 +28,7 @@ private:
 public:
   void readArguments(tinyxml2::XMLElement *element);
   void readCamera(tinyxml2::XMLNode *node);
-  void writeToFile(std::string path);
+  void writeToFile(std::shared_ptr<Film> film);
   void render();
   Engine(std::string path);
   ~Engine();

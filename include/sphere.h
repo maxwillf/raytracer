@@ -40,5 +40,6 @@ public:
     }
   };
 
+  friend DerivedRegistrar<Primitive, Sphere>;
   //  std::shared_ptr<Material> material;
 };
