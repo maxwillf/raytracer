@@ -4,7 +4,7 @@
 #include "camera.h"
 #include "ortographicCamera.h"
 #include "background.h"
-#include "film.h"
+#include "film.hpp"
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -28,8 +28,7 @@ private:
 public:
   void readArguments(tinyxml2::XMLElement *element);
   void readCamera(tinyxml2::XMLNode *node);
-  void writeToFile(std::shared_ptr<Film> film);
   void render();
-  Engine(std::string path);
+    Engine(std::string path);
   ~Engine();
 };

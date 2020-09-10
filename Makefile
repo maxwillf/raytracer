@@ -1,5 +1,5 @@
 Target = raytracer 
-INCLUDES = include
+INCLUDES = . 
 CXX = g++
 CXXFLAGS = -Wall -std=c++17 -g -ggdb -I $(INCLUDES) -fopenmp
 DOCS = docs 
@@ -23,7 +23,7 @@ project: $(OBJECTS) | $(BINDIR)
 docs: 
 	@echo "Generating Documentation"
 	@doxygen config
-	
+
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp $(HEADERS) | $(OBJDIR)
 	@$(CXX) -w $(CXXFLAGS) -c $< -o $@
 	@echo "Sources $<" 

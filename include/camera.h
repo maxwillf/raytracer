@@ -2,7 +2,7 @@
 #define __CAMERA__
 
 #include "vec3.h"
-#include "film.h"
+#include "film.hpp"
 #include "ray.h"
 #include "argument.h"
 #include <memory>

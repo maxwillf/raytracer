@@ -1,5 +1,4 @@
-#include "engine.h"
-#include "lodepng.h"
+#include "include/engine.hpp"
 
 void Engine::render()
 {
@@ -47,73 +46,31 @@ void Engine::render()
 
   int height = camera->film->getHeight();
   int width = camera->film->getWidth();
-  buffer = std::vector<std::vector<vec3>>(height, std::vector<vec3>(width));
 
 #pragma omp parallel for collapse(2)
   for (int h = height - 1; h >= 0; h--)
   {
     for (int w = 0; w < width; w++)
     {
-      float j = float(h) / height;
-      float i = float(w) / width;
+      float j = float(height -1 -h) / height;
+      float i = float(width - 1 - w) / width;
       Ray ray = camera->generate_ray(w, h);
-      //std::cout << ray.direction() << " " << ray.origin() << std::endl;
-      if (buffer[h][w] != vec3(255, 0, 0))
-      {
-        buffer[h][w] = this->background->getColor(i, j, ray);
-      }
+//std::cout << ray.direction() << " " << ray.origin() << std::endl;
+      vec3 color = this->background->getColor(i, j, ray);
       for (const shared_ptr<Primitive> &p : obj_list)
       {
         if (p->intersect_p(ray))
         {
-          // std::cout << p << std::endl;
-          buffer[height - 1 - h][w] = vec3(255, 0, 0);
+        // std::cout << p << std::endl;
+          color = vec3(255, 0, 0);
         }
       }
+      camera->film->setPoint(w, h, color);
     }
   }
-
-  writeToFile(camera->film);
+  camera->film->writeToFile();
 }
 
-void Engine::writeToFile(std::shared_ptr<Film> film)
-{
-  std::ofstream fs(film->getFilename());
-  int width = this->buffer[0].size();
-  int height = this->buffer.size();
-
-  if (film->getImgType() == "png")
-  {
-    std::vector<unsigned char> image;
-    image.resize(width * height * 4);
-    for (int i = 0; i < height; ++i)
-    {
-      for (int j = 0; j < width; ++j)
-      {
-        image[4 * width * i + 4 * j + 0] = buffer[i][j][0];
-        image[4 * width * i + 4 * j + 1] = buffer[i][j][1];
-        image[4 * width * i + 4 * j + 2] = buffer[i][j][2];
-        image[4 * width * i + 4 * j + 3] = 255;
-      }
-    }
-    lodepng::encode(film->getFilename(), image, width, height);
-  }
-  else
-  {
-    int maxColorValue = 255;
-    fs << "P3" << std::endl;
-    fs << width << " " << height << std::endl;
-    fs << maxColorValue << std::endl;
-
-    for (int i = 0; i < height; ++i)
-    {
-      for (int j = 0; j < width; ++j)
-      {
-        fs << buffer[i][j] << std::endl;
-      }
-    }
-  }
-}
 
 Engine::Engine(std::string path)
 {

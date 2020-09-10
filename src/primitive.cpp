@@ -1,5 +1,5 @@
-#include "primitive.h"
-#include "sphere.h"
+#include "include/primitive.h"
+#include "include/sphere.h"
 
 template <>
 std::vector<Factory<Primitive, Arguments>::ReadFunPtr> Factory<Primitive, Arguments>::registeredFuns = std::vector<Factory<Primitive, Arguments>::ReadFunPtr>();
