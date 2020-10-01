@@ -1,8 +1,11 @@
 #include "include/engine.hpp"
+#include "include/aggregate.hpp"
 
 void Engine::run()
 {
   std::shared_ptr<Film> filmPtr = nullptr;
+  //  Primitive *aggregate = new Aggregate();
+
   Arguments lookat = std::make_tuple<std::string, std::vector<Argument>>(std::string(), std::vector<Argument>());
   for (auto &&arg : args)
   {
@@ -10,16 +13,16 @@ void Engine::run()
     auto constructionArguments = get<1>(arg);
     auto produceArgs = std::make_tuple(tagName, constructionArguments);
     if (tagName == "camera")
-    {
-      this->camera = std::shared_ptr<Camera>(Factory<Camera, Arguments>::Produce(produceArgs));
-      camera->setFrame(lookat);
+     {
+       this->camera = std::shared_ptr<Camera>(Factory<Camera, Arguments>::Produce(produceArgs));
+camera->setFrame(lookat);
       std::cout << "setting camera frame" << std::endl;
     }
     if (tagName == "film")
     {
       filmPtr = std::shared_ptr<Film>(Factory<Film, Arguments>::Produce(produceArgs));
       std::cout << "setting camera film" << std::endl;
-        camera->setFilm(filmPtr);
+      camera->setFilm(filmPtr);
     }
     if (tagName == "lookat")
     {
