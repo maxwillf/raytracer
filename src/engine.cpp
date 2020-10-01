@@ -1,6 +1,6 @@
 #include "include/engine.hpp"
 
-void Engine::render()
+void Engine::run()
 {
   std::shared_ptr<Film> filmPtr = nullptr;
   Arguments lookat = std::make_tuple<std::string, std::vector<Argument>>(std::string(), std::vector<Argument>());
@@ -12,10 +12,14 @@ void Engine::render()
     if (tagName == "camera")
     {
       this->camera = std::shared_ptr<Camera>(Factory<Camera, Arguments>::Produce(produceArgs));
+      camera->setFrame(lookat);
+      std::cout << "setting camera frame" << std::endl;
     }
     if (tagName == "film")
     {
       filmPtr = std::shared_ptr<Film>(Factory<Film, Arguments>::Produce(produceArgs));
+      std::cout << "setting camera film" << std::endl;
+        camera->setFilm(filmPtr);
     }
     if (tagName == "lookat")
     {
@@ -29,21 +33,33 @@ void Engine::render()
     {
       obj_list.push_back(std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs)));
     }
+    if(tagName == "world_end"){
+      //      if (!get<1>(lookat).empty())
+//      {
+//        camera->setFrame(lookat);
+//      }
+//
+//      if (filmPtr != nullptr)
+//      {
+//        std::cout << "setting film" << std::endl;
+//        camera->setFilm(filmPtr);
+//      }
+//      else
+//      {
+//        std::cout << "nullptr film" << std::endl;
+//      }
+      std::cout << "should be rendered first" << std::endl;
+      render();
+    }
+    if(tagName == "render_again" ){
+      std::cout << "should be rendered second" << std::endl;
+      render();
+    }
   }
-  if (!get<1>(lookat).empty())
-  {
-    camera->setFrame(lookat);
-  }
-  if (filmPtr != nullptr)
-  {
-    std::cout << "setting film" << std::endl;
-    camera->setFilm(filmPtr);
-  }
-  else
-  {
-    std::cout << "nullptr film" << std::endl;
-  }
+}
 
+
+void Engine::render() {
   int height = camera->film->getHeight();
   int width = camera->film->getWidth();
 
@@ -61,7 +77,7 @@ void Engine::render()
       {
         if (p->intersect_p(ray))
         {
-        // std::cout << p << std::endl;
+          // std::cout << p << std::endl;
           color = vec3(255, 0, 0);
         }
       }
@@ -69,13 +85,12 @@ void Engine::render()
     }
   }
   camera->film->writeToFile();
+
 }
 
 
-Engine::Engine(std::string path)
+void Engine::loadSceneFile(std::string path)
 {
-  args = std::vector<Arguments>();
-  buffer = std::vector<std::vector<vec3>>();
   tinyxml2::XMLDocument doc;
   doc.LoadFile(path.c_str());
   auto node = doc.FirstChildElement()->FirstChildElement(); // supposedly goes to <settings>
@@ -89,6 +104,14 @@ Engine::Engine(std::string path)
 void Engine::readArguments(tinyxml2::XMLElement *element)
 {
   std::string elemName = element->Value();
+
+  // if there are more than one scene files, read them
+  if(elemName == "include"){
+    std::string filename = element->FirstAttribute()->Value();
+    std::cout << "found include: " << filename << std::endl;
+    loadSceneFile(filename);
+  }
+
   auto attribute = element->FirstAttribute();
   std::vector<Argument> arg;
 
@@ -101,6 +124,14 @@ void Engine::readArguments(tinyxml2::XMLElement *element)
   Arguments currentArgs = std::make_tuple(elemName, arg);
   this->args.push_back(currentArgs);
 }
+
+
+Engine::Engine()
+{
+  args = std::vector<Arguments>();
+  buffer = std::vector<std::vector<vec3>>();
+}
+
 Engine::~Engine()
 {
 }

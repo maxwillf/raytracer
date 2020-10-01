@@ -1,6 +1,6 @@
-#include "../include/camera.h"
-#include "../include/ortographicCamera.h"
-#include "../include/perspectiveCamera.h"
+#include "../include/camera.hpp"
+#include "../include/ortographicCamera.hpp"
+#include "../include/perspectiveCamera.hpp"
 
 template <>
 std::vector<Factory<Camera, Arguments>::ReadFunPtr> Factory<Camera, Arguments>::registeredFuns = std::vector<Factory<Camera, Arguments>::ReadFunPtr>();

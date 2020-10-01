@@ -1,4 +1,4 @@
-#include "include/argument.h"
+#include "include/argument.hpp"
 
 Argument::Argument(const tinyxml2::XMLAttribute *attribute)
 {
