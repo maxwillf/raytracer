@@ -3,10 +3,12 @@
 #include "include/factory.hpp"
 #include "include/material.hpp"
 #include "include/vec3.hpp"
+#include "include/flatIntegrator.hpp"
 
 class FlatMaterial : public Material {
 
         vec3 color;
+    public:
         FlatMaterial(std::vector<Argument> args)
         {
             for (auto &&arg : args)
@@ -17,6 +19,9 @@ class FlatMaterial : public Material {
                 }
             }
         };
+         Color24 kd(){
+             // stub
+         }
         static Material *Make(Arguments args) {
             if (get<1>(args)[0].getValue<std::string>() == "flat")
             {

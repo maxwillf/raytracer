@@ -13,7 +13,12 @@ public:
   //  virtual ~Primitive();
     bool intersect(const Ray &r, Surfel *sf) const {
       // stub
-      return false;
+      vec3 oc = r.origin() - center;
+      float a = dot(r.direction(), r.direction());
+      float b = 2.0 * dot(oc, r.direction());
+      float c = dot(oc, oc) - radius * radius;
+      float discrimant = b * b - 4 * a * c;
+      return (discrimant > 0);
     };
     // Simpler & faster version of intersection that only return true/false.
     // It does not compute the hit point information.
@@ -44,8 +49,8 @@ public:
     {
       return nullptr;
     }
-  };
+    };
+    std::shared_ptr<Material> material;
 
-  friend DerivedRegistrar<Primitive, Sphere>;
-   std::shared_ptr<Material> material;
+    friend DerivedRegistrar<Primitive, Sphere>;
 };

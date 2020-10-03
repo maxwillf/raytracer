@@ -31,7 +31,7 @@ public:
       std::cout << screenWindow[i] << std::endl;
     }
   }
-    Ray generate_ray(int x, int y) override
+    Ray generate_ray(int x, int y) const override
     {
       float u = screenWindow[0] + (screenWindow[1] - screenWindow[0]) * (float(x) + 0.5) / float(film->getWidth());
       float v = screenWindow[2] + (screenWindow[3] - screenWindow[2]) * (float(y) + 0.5) / float(film->getHeight());

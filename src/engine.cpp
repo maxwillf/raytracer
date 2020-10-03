@@ -1,63 +1,67 @@
 #include "include/engine.hpp"
 #include "include/aggregate.hpp"
+#include "include/integrator.hpp"
+#include "include/scene.hpp"
+#include <memory>
 
 void Engine::run()
 {
   std::shared_ptr<Film> filmPtr = nullptr;
-  //  Primitive *aggregate = new Aggregate();
+  unique_ptr<Integrator> integrator = nullptr;
+  shared_ptr<Material> currentMaterial;
+  Aggregate* agg = new Aggregate();
+  //  shared_ptr<Aggregate> aggregate = make_shared<Aggregate>(agg);
 
   Arguments lookat = std::make_tuple<std::string, std::vector<Argument>>(std::string(), std::vector<Argument>());
   for (auto &&arg : args)
   {
     std::string tagName = get<0>(arg);
-    auto constructionArguments = get<1>(arg);
-    auto produceArgs = std::make_tuple(tagName, constructionArguments);
-    if (tagName == "camera")
+auto constructionArguments = get<1>(arg);
+  auto produceArgs = std::make_tuple(tagName, constructionArguments);
+  if (tagName == "camera")
+  {
+    this->camera = std::shared_ptr<Camera>(Factory<Camera, Arguments>::Produce(produceArgs));
+    camera->setFrame(lookat);
+    std::cout << "setting camera frame" << std::endl;
+  }
+  if (tagName == "film")
+  {
+    filmPtr = std::shared_ptr<Film>(Factory<Film, Arguments>::Produce(produceArgs));
+    std::cout << "setting camera film" << std::endl;
+    camera->setFilm(filmPtr);
+}
+     if (tagName == "lookat")
      {
-       this->camera = std::shared_ptr<Camera>(Factory<Camera, Arguments>::Produce(produceArgs));
-camera->setFrame(lookat);
-      std::cout << "setting camera frame" << std::endl;
-    }
-    if (tagName == "film")
-    {
-      filmPtr = std::shared_ptr<Film>(Factory<Film, Arguments>::Produce(produceArgs));
-      std::cout << "setting camera film" << std::endl;
-      camera->setFilm(filmPtr);
-    }
-    if (tagName == "lookat")
-    {
-      lookat = arg;
-    }
-    if (tagName == "background")
-    {
-      this->background = std::shared_ptr<Background>(Factory<Background, Arguments>::Produce(produceArgs));
-    }
-    if (tagName == "object")
-    {
-      obj_list.push_back(std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs)));
-    }
-    if(tagName == "world_end"){
-      //      if (!get<1>(lookat).empty())
-//      {
-//        camera->setFrame(lookat);
-//      }
-//
-//      if (filmPtr != nullptr)
-//      {
-//        std::cout << "setting film" << std::endl;
-//        camera->setFilm(filmPtr);
-//      }
-//      else
-//      {
-//        std::cout << "nullptr film" << std::endl;
-//      }
-      std::cout << "should be rendered first" << std::endl;
-      render();
-    }
-    if(tagName == "render_again" ){
-      std::cout << "should be rendered second" << std::endl;
-      render();
-    }
+       lookat = arg;
+     }
+     if (tagName == "background")
+     {
+       this->background = std::shared_ptr<Background>(Factory<Background, Arguments>::Produce(produceArgs));
+     }
+      if (tagName == "object")
+      {
+       auto obj =
+         std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs));
+       obj->setMaterial(currentMaterial);
+// aggregate->addPrimitive(obj);
+       //        obj_list.push_back(std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs)));
+      }
+      if(tagName == "world_end"){
+        std::cout << "should be rendered first" << std::endl;
+        //       Scene scene(aggregate,background);
+        //integrator->render(scene);
+        //render();
+          }
+        if(tagName == "material" ){
+          currentMaterial =
+            std::shared_ptr<Material>(Factory<Material, Arguments>::Produce(produceArgs));
+        }
+        if(tagName == "render_again" ){
+          std::cout << "should be rendered second" << std::endl;
+          // Scene scene(aggregate,background);
+          // integrator->render(scene);
+          // render();
+        }
   }
 }
 

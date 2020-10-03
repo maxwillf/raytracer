@@ -2,7 +2,8 @@
 
 #include "ray.hpp"
 #include "factory.hpp"
-
+#include "material.hpp"
+#include <memory>
 class Surfel;
 
 class Primitive
@@ -17,10 +18,12 @@ class Primitive
       {
         return nullptr;
       }
-      //  virtual const Material *get_material(void) const = {return material;}
-    private:
-      //  std::shared_ptr<Material> material;
+    virtual const std::shared_ptr<Material> material_get(void) const {return material;}
+    virtual void setMaterial(std::shared_ptr<Material> mat) {material = mat;}
 
-      friend DerivedRegistrar<Primitive, Primitive>;
+  private:
+       std::shared_ptr<Material> material;
+
+    friend DerivedRegistrar<Primitive, Primitive>;
   };
 

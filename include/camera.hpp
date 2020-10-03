@@ -21,11 +21,11 @@ public:
   Point e;
   std::vector<float> screenWindow;
 
-  virtual Ray generate_ray(int x, int y) = 0;
+    virtual Ray generate_ray (int x, int y) const = 0;
 
-  Camera(){};
-  static Camera *Make(Arguments args) { return nullptr; };
-  virtual void setFilm(std::shared_ptr<Film> film)
+    Camera(){};
+    static Camera *Make(Arguments args) { return nullptr; };
+    virtual void setFilm(std::shared_ptr<Film> film)
   {
     this->film = film;
 

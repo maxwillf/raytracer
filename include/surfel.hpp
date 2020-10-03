@@ -10,6 +10,7 @@ class Surfel
         Surfel(const Point &p, const vec3 &n, const vec3 &wo, float time,
                const Point2 &uv, const Primitive *pri)
             : p{p}, n{n}, wo{wo}, time{time}, uv{uv}, primitive{pri} {/* empty */};
+        Surfel(){}
 
         Point p;                              //!< Contact point.
         vec3 n;                               //!< The surface normal.
