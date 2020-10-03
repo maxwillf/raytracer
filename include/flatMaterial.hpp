@@ -19,9 +19,9 @@ class FlatMaterial : public Material {
                 }
             }
         };
-         Color24 kd(){
-             // stub
-         }
+        Color24 kd(){
+            return color;
+        }
         static Material *Make(Arguments args) {
             if (get<1>(args)[0].getValue<std::string>() == "flat")
             {

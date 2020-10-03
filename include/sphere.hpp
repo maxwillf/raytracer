@@ -2,7 +2,6 @@
 #include "include/material.hpp"
 #include "primitive.hpp"
 #include <memory>
-
 class Sphere : Primitive
 {
 private:
@@ -13,6 +12,7 @@ public:
   //  virtual ~Primitive();
     bool intersect(const Ray &r, Surfel *sf) const {
       // stub
+      //      sf = new Surfel(Point(0,0,0),)
       vec3 oc = r.origin() - center;
       float a = dot(r.direction(), r.direction());
       float b = 2.0 * dot(oc, r.direction());

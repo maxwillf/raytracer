@@ -13,13 +13,15 @@ Color24 FlatIntegrator::Li(const Ray& ray, const Scene& scene, Color24 bkg_color
         // This might be just:
         L = bkg_color;
     }
-     else {
+    else {
+        // std::cout << "did touch object" << std::endl;
 // Some form of determining the incoming radiance at the ray's origin.
         // For this integrator, it might just be:
         // Polymorphism in action.
-         FlatMaterial *fm = static_cast< FlatMaterial *>( isect.primitive->material_get().get() );
-         // Assign diffuse color to L.
-         L = fm->kd(); // Call a method present only in FlatMaterial.
-     }
+        //        FlatMaterial *fm = static_cast< FlatMaterial *>( isect.primitive->material_get().get() );
+        // Assign diffuse color to L.
+         //L = fm->kd(); // Call a method present only in FlatMaterial.
+         L = Color24(255,255,255);
+    }
     return L;
 }

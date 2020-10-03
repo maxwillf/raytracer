@@ -13,21 +13,23 @@ void SamplerIntegrator::render(const Scene& scene) {
     int yres = camera->film->getHeight();
     for ( int y = 0 ; y < yres ; y++ ) {
         for( int x = 0 ; x < xres ; x++ ) {
+            float j = float(yres -1 -y) / yres;
+            float i = float(xres - 1 - xres) / xres;
             // Get the background color in case we hit nothing.
             Color24 L_background{0,0,0};
-            Point2 screen_coord{ float(x)/float(xres), float(y)/float(yres) };
+            //            Point2 screen_coord{ float(x)/float(xres), float(y)/float(yres) };
             Ray ray = camera->generate_ray(x,y); // Generate the ray from (x,y)
-            L_background = scene.background->getColor(x,y,ray);
+            L_background = scene.background->getColor(i,j,ray);
             // Determine the ray for the current camera type.
             // Determine the incoming light.
             Color24 L =  Li( ray, scene, L_background );
             // Add color (radiance) to the image.
-            //camera->film->add_sample( Point2( x, y ), L ); // Set color of pixel (x,y) to L.
+            camera->film->setPoint(x, y, L); // Set color of pixel (x,y) to L.
         }
     }
 // Send image color buffer to the output file.
-    //    camera->film->writeToFile( image );
+        camera->film->writeToFile();
 }
 void SamplerIntegrator::preprocess(const Scene &scene){
-    // stub
+// stub
 }
