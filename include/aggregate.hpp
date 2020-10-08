@@ -32,13 +32,14 @@ class Aggregate : public Primitive
         };
 
         bool intersect(const Ray &r, Surfel *sf) const {
+            bool intersected = false;
             for(auto &primitive : primitives){
 
                 if(primitive->intersect(r,sf)){
-                    return true;
+                    intersected = true;
                 }
             }
-            return false;
+            return intersected;
         }
         //        Material *get_material(void) const = {return material ;}
     private:
