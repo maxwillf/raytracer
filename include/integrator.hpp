@@ -33,7 +33,7 @@ class SamplerIntegrator : protected Integrator {
             this->camera = cam;
 }
 
-                                                                 virtual Color24 Li( const Ray& ray, const Scene& scene, Color24 bkg_color ) const = 0;
+        virtual Color24 Li( const Ray& ray, const Scene& scene, Color24 bkg_color, int depth = 0 ) const = 0;
         virtual void render( const Scene& scene );
         virtual void preprocess( const Scene& scene );
         static Integrator* Make(Arguments args) {

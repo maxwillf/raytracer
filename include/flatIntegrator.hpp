@@ -6,7 +6,7 @@
 
 class FlatIntegrator : public SamplerIntegrator{
     public:
-        Color24 Li(const Ray& ray, const Scene& scene, Color24 bkg_color ) const;
+        Color24 Li(const Ray& ray, const Scene& scene, Color24 bkg_color, int depth = 0 ) const;
         //FlatIntegrator()
         //{
         //}
