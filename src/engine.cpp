@@ -3,6 +3,7 @@
 #include "include/integrator.hpp"
 #include "include/scene.hpp"
 #include <memory>
+#include <unordered_map>
 
 void Engine::run()
 {
@@ -10,6 +11,7 @@ void Engine::run()
   unique_ptr<Integrator> integrator = nullptr;
   shared_ptr<Material> currentMaterial;
   shared_ptr<Aggregate> aggregate = make_shared<Aggregate>();
+  std::unordered_map<std::string, shared_ptr<Material>> namedMaterials = {};
 
   Arguments lookat = std::make_tuple<std::string, std::vector<Argument>>(std::string(), std::vector<Argument>());
   for (auto &&arg : args)
@@ -70,10 +72,22 @@ void Engine::run()
       integrator->render(scene);
       //  render();
     }
+    if(tagName == "make_named_material" ){
+      for (auto &&arg : constructionArguments)
+      {
+        if (arg.getKey() == "name")
+        {
+          namedMaterials.insert(
+            {
+            arg.getValue<std::string>(),
+            std::shared_ptr<Material>(Factory<Material, Arguments>::Produce(produceArgs))
+            }
+          );
+        }
+      }
+    }
   }
 }
-
-
 void Engine::render() {
   int height = camera->film->getHeight();
   int width = camera->film->getWidth();
