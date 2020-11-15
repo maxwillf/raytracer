@@ -25,13 +25,13 @@ class Integrator {
 };
 
 
-class SamplerIntegrator : protected Integrator {
+class SamplerIntegrator : public Integrator {
         //=== Public interface
 	public:
 		//virtual ~SamplerIntegrator();
 		SamplerIntegrator( std::shared_ptr<const Camera> cam )  {
             this->camera = cam;
-}
+        }
 
         virtual Color24 Li( const Ray& ray, const Scene& scene, Color24 bkg_color, int depth = 0 ) const = 0;
         virtual void render( const Scene& scene );

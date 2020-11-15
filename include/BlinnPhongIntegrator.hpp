@@ -3,34 +3,46 @@
 
 #include "include/factory.hpp"
 #include "include/integrator.hpp"
+#include "include/lightSource.hpp"
 #include <memory>
 
-class BlinnPhongIntegrator : public SamplerIntegrator {
-    public:
-        Color24 Li(const Ray& ray, const Scene& scene, Color24 bkg_color, int depth) const;
-        //BlinnPhongIntegrator()
-        //{
-        //}
-        BlinnPhongIntegrator(std::vector<Argument> attributes) : SamplerIntegrator(std::shared_ptr<const Camera>(nullptr))
+class BlinnPhongIntegrator : public SamplerIntegrator
+{
+
+public:
+    Color24 Li(const Ray &ray, const Scene &scene, Color24 bkg_color, int depth) const;
+    int max_depth = 0;
+    BlinnPhongIntegrator(std::vector<Argument> attributes) : SamplerIntegrator(std::shared_ptr<const Camera>(nullptr))
+    {
+        max_depth = findAttribute(attributes, "depth").getValue<int>();
+    }
+
+    BlinnPhongIntegrator() : SamplerIntegrator(std::shared_ptr<const Camera>(nullptr))
+    {
+        //            BlinnPhongIntegrator(shared_ptr<const Camera>(nullptr));
+    }
+
+    ~BlinnPhongIntegrator()
+    {
+    }
+
+    static Integrator *Make(Arguments args)
+    {
+        if (get<1>(args)[0].getValue<std::string>() == "blinn_phong")
         {
-            //            BlinnPhongIntegrator(shared_ptr<const Camera>(nullptr));
+            return new BlinnPhongIntegrator(get<1>(args));
         }
-
-        ~BlinnPhongIntegrator(){
-
+        else
+        {
+            return nullptr;
         }
+    }
 
-        static Integrator* Make(Arguments args){
-            if (get<1>(args)[0].getValue<std::string>() == "blinn")
-            {
-                return new BlinnPhongIntegrator(get<1>(args));
-            }
-            else
-            {
-                return nullptr;
-            }
-        }
-        friend DerivedRegistrar<Integrator, BlinnPhongIntegrator>;
+    //void addLightSource(shared_ptr<LightSource> source){
+    //    lights.push_back(source);
+    //}
+
+    friend DerivedRegistrar<Integrator, BlinnPhongIntegrator>;
 };
 
 #endif // __BLINNPHONGINTEGRATOR_H_

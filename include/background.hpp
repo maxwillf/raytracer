@@ -36,7 +36,7 @@ private:
 public:
   Background(){};
   vec3 getColor() { return color; };
-  vec3 getColor(float i, float j, Ray ray)
+  vec3 getColor(double i, double j, Ray ray)
   {
     if (!image.empty())
     {
@@ -57,14 +57,14 @@ public:
         // correção dos eixos x,y z
         Point p = unit_vector(Point(-pointInRay[1], -pointInRay[0], pointInRay[2]));
         double convertFromRadians = 180.0 / PI;
-        float radius = p.length();
-        float phi = radToDegrees(atan2(p[1], p[0]) + PI);
-        float theta = radToDegrees(acos(p[2] / radius));
-        float newU = phi / 360.0;
-        float newV = theta / 180.0;
+        double radius = p.length();
+        double phi = radToDegrees(atan2(p[1], p[0]) + PI);
+        double theta = radToDegrees(acos(p[2] / radius));
+        double newU = phi / 360.0;
+        double newV = theta / 180.0;
 
-        float height = image.size();
-        float width = image[0].size();
+        double height = image.size();
+        double width = image[0].size();
         int newX = abs(width * newU);
         int newY = abs(height * newV);
         //        std::cout << newX << " " << newY << std::endl;
@@ -142,7 +142,7 @@ public:
       }
       if (attr.getKey() == "color")
       {
-        color = vec3(attr.getValues<float>());
+        color = vec3(attr.getValues<double>());
       }
       if (attr.getKey() == "mapping")
       {
@@ -163,19 +163,19 @@ public:
       }
       if (attr.getKey() == "bl")
       {
-        bl = attr.getValues<float>();
+        bl = attr.getValues<double>();
       }
       if (attr.getKey() == "br")
       {
-        br = attr.getValues<float>();
+        br = attr.getValues<double>();
       }
       if (attr.getKey() == "tl")
       {
-        tl = attr.getValues<float>();
+        tl = attr.getValues<double>();
       }
       if (attr.getKey() == "tr")
       {
-        tr = attr.getValues<float>();
+        tr = attr.getValues<double>();
       }
       if (attr.getKey() == "filename")
       {

@@ -19,23 +19,23 @@ public:
   vec3 u;
   vec3 v;
   Point e;
-  std::vector<float> screenWindow;
+  std::vector<double> screenWindow;
 
-    virtual Ray generate_ray (int x, int y) const = 0;
+  virtual Ray generate_ray(int x, int y) const = 0;
 
-    Camera(){};
-    static Camera *Make(Arguments args) { return nullptr; };
-    virtual void setFilm(std::shared_ptr<Film> film)
+  Camera(){};
+  static Camera *Make(Arguments args) { return nullptr; };
+  virtual void setFilm(std::shared_ptr<Film> film)
   {
     this->film = film;
 
     if (screenWindow.empty())
     {
 
-      float xratio, yratio;
-      yratio = std::max(film->getHeight(), film->getWidth()) / float(film->getWidth());
-      xratio = std::max(film->getHeight(), film->getWidth()) / float(film->getHeight());
-      screenWindow = std::vector<float>{-xratio, xratio, -yratio, yratio};
+      double xratio, yratio;
+      yratio = std::max(film->getHeight(), film->getWidth()) / double(film->getWidth());
+      xratio = std::max(film->getHeight(), film->getWidth()) / double(film->getHeight());
+      screenWindow = std::vector<double>{-xratio, xratio, -yratio, yratio};
     }
     std::cout << "common setFilm" << std::endl;
   }
@@ -44,9 +44,9 @@ public:
     if (get<0>(args) == "lookat")
     {
       auto arguments = get<1>(args);
-      vec3 look_from = findAttribute(arguments, "look_from").getValues<float>();
-      vec3 look_at = findAttribute(arguments, "look_at").getValues<float>();
-      vec3 up = findAttribute(arguments, "up").getValues<float>();
+      vec3 look_from = findAttribute(arguments, "look_from").getValues<double>();
+      vec3 look_at = findAttribute(arguments, "look_at").getValues<double>();
+      vec3 up = findAttribute(arguments, "up").getValues<double>();
 
       gaze = look_at - look_from;
       w = unit_vector(gaze);

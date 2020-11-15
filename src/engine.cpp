@@ -1,17 +1,25 @@
 #include "include/engine.hpp"
 #include "include/aggregate.hpp"
+#include "include/argument.hpp"
 #include "include/integrator.hpp"
+#include "include/BlinnPhongIntegrator.hpp"
 #include "include/scene.hpp"
+#include "include/lightSource.hpp"
 #include <memory>
 #include <unordered_map>
 
 void Engine::run()
 {
   std::shared_ptr<Film> filmPtr = nullptr;
-  unique_ptr<Integrator> integrator = nullptr;
-  shared_ptr<Material> currentMaterial;
-  shared_ptr<Aggregate> aggregate = make_shared<Aggregate>();
+  //  std::unique_ptr<Integrator> integrator = std::make_unique<BlinnPhongIntegrator>();
+  std::unique_ptr<Integrator> integrator;
+  std::shared_ptr<Material> currentMaterial;
+  std::shared_ptr<Aggregate> aggregate = make_shared<Aggregate>();
   std::unordered_map<std::string, shared_ptr<Material>> namedMaterials = {};
+  vec3 currentTranslate = vec3(0, 0, 0);
+  Argument translateArg = Argument("", {});
+  std::vector<shared_ptr<LightSource>> lights = std::vector<shared_ptr<LightSource>>();
+  shared_ptr<AmbientLight> ambientLight = nullptr;
 
   Arguments lookat = std::make_tuple<std::string, std::vector<Argument>>(std::string(), std::vector<Argument>());
   for (auto &&arg : args)
@@ -24,9 +32,10 @@ void Engine::run()
       this->camera = std::shared_ptr<Camera>(Factory<Camera, Arguments>::Produce(produceArgs));
       camera->setFrame(lookat);
       std::cout << "setting camera frame" << std::endl;
-      if(integrator != nullptr) {
+      if (integrator != nullptr)
+      {
         std::cout << "Setting a new camera for the integrator" << std::endl;
-        integrator->setCamera(camera);
+        //        integrator->setCamera(camera);
       }
     }
     if (tagName == "film")
@@ -37,58 +46,100 @@ void Engine::run()
     }
     if (tagName == "lookat")
     {
+      std::cout << "lookat" << std::endl;
       lookat = arg;
     }
     if (tagName == "background")
     {
       this->background = std::shared_ptr<Background>(Factory<Background, Arguments>::Produce(produceArgs));
     }
+    if (tagName == "translate")
+    {
+      currentTranslate = findAttribute(constructionArguments, "value").getValues<double>();
+      translateArg = findAttribute(constructionArguments, "value");
+    }
     if (tagName == "object")
     {
+      // changes needed in order to allow translate tags
+      if (findAttribute(constructionArguments, "type").getValue<std::string>() == "sphere")
+      {
+        constructionArguments.push_back(Argument("center", translateArg.getValues<std::string>()));
+        //constructionArguments.push_back(Argument("center",{currentTranslate.toString()}));
+        produceArgs = std::make_tuple(tagName, constructionArguments);
+      }
+
       auto obj =
-        std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs));
+          std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs));
       obj->setMaterial(currentMaterial);
       aggregate->addPrimitive(obj);
       //        obj_list.push_back(std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs)));
     }
-    if(tagName == "world_end"){
+    if (tagName == "world_end")
+    {
       std::cout << "should be rendered first" << std::endl;
-      Scene scene(aggregate,background);
+      Scene scene(aggregate, background, lights, ambientLight);
       integrator->render(scene);
+      lights.clear();
+      ambientLight.reset();
       //render();
     }
-    if(tagName == "material" ){
+    if (tagName == "material")
+    {
       currentMaterial =
-        std::shared_ptr<Material>(Factory<Material, Arguments>::Produce(produceArgs));
+          std::shared_ptr<Material>(Factory<Material, Arguments>::Produce(produceArgs));
     }
-    if(tagName == "integrator" ){
+    if (tagName == "named_material")
+    {
+      currentMaterial = namedMaterials.at(constructionArguments[0].getValue<std::string>());
+    }
+    if (tagName == "integrator")
+    {
+      std::cout << "integrator factory" << std::endl;
       integrator =
-        std::unique_ptr<Integrator>(Factory<Integrator, Arguments>::Produce(produceArgs));
+          std::unique_ptr<Integrator>(Factory<Integrator, Arguments>::Produce(produceArgs));
       integrator->setCamera(camera);
     }
-    if(tagName == "render_again" ){
+    if (tagName == "render_again")
+    {
       std::cout << "should be rendered second" << std::endl;
-      Scene scene(aggregate,background);
+      Scene scene(aggregate, background, lights, ambientLight);
       integrator->render(scene);
-      //  render();
     }
-    if(tagName == "make_named_material" ){
-      for (auto &&arg : constructionArguments)
+    if (tagName == "make_named_material")
+    {
+      Argument arg = findAttribute(constructionArguments, "name");
+      namedMaterials.insert(
+          {arg.getValue<std::string>(),
+           std::shared_ptr<Material>(Factory<Material, Arguments>::Produce(produceArgs))});
+    }
+    if (tagName == "light_source")
+    {
+      auto lightPtr =
+          std::shared_ptr<LightSource>(Factory<LightSource, Arguments>::Produce(produceArgs));
+      //shared_ptr<AmbientLight> = std::dynamic_pointer_cast<AmbientLight>(lightPtr);
+      if (is_ambient(lightPtr))
       {
-        if (arg.getKey() == "name")
-        {
-          namedMaterials.insert(
-            {
-            arg.getValue<std::string>(),
-            std::shared_ptr<Material>(Factory<Material, Arguments>::Produce(produceArgs))
-            }
-          );
-        }
+        ambientLight = std::dynamic_pointer_cast<AmbientLight>(lightPtr);
       }
+      else
+      {
+        lights.push_back(lightPtr);
+      }
+      // if (equal)
+      // {
+      //   ambientLight = std::dynamic_pointer_cast<AmbientLight>(lightPtr);
+      // }
+      // else
+      // {
+      //   lights.push_back(
+      //       lightPtr);
+      // }
     }
   }
 }
-void Engine::render() {
+
+void Engine::render()
+{
   int height = camera->film->getHeight();
   int width = camera->film->getWidth();
 
@@ -97,10 +148,10 @@ void Engine::render() {
   {
     for (int w = 0; w < width; w++)
     {
-      float j = float(height -1 -h) / height;
-      float i = float(width - 1 - w) / width;
+      double j = double(height - 1 - h) / height;
+      double i = double(width - 1 - w) / width;
       Ray ray = camera->generate_ray(w, h);
-//std::cout << ray.direction() << " " << ray.origin() << std::endl;
+      //std::cout << ray.direction() << " " << ray.origin() << std::endl;
       vec3 color = this->background->getColor(i, j, ray);
       for (const shared_ptr<Primitive> &p : obj_list)
       {
@@ -114,9 +165,7 @@ void Engine::render() {
     }
   }
   camera->film->writeToFile();
-
 }
-
 
 void Engine::loadSceneFile(std::string path)
 {
@@ -135,7 +184,8 @@ void Engine::readArguments(tinyxml2::XMLElement *element)
   std::string elemName = element->Value();
 
   // if there are more than one scene files, read them
-  if(elemName == "include"){
+  if (elemName == "include")
+  {
     std::string filename = element->FirstAttribute()->Value();
     std::cout << "found include: " << filename << std::endl;
     loadSceneFile(filename);
@@ -153,7 +203,6 @@ void Engine::readArguments(tinyxml2::XMLElement *element)
   Arguments currentArgs = std::make_tuple(elemName, arg);
   this->args.push_back(currentArgs);
 }
-
 
 Engine::Engine()
 {

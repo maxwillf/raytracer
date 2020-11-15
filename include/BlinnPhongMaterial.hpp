@@ -5,52 +5,75 @@
 #include "include/material.hpp"
 #include "include/vec3.hpp"
 
-class BlinnPhongMaterial : public Material {
-        vec3 ambient;
-        vec3 diffuse;
-        vec3 specular;
-        unsigned int glossiness;
+class BlinnPhongMaterial : public Material
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 mirror;
+    unsigned int glossiness;
 
-    public:
-        BlinnPhongMaterial(std::vector<Argument> args)
+public:
+    BlinnPhongMaterial(std::vector<Argument> args)
+    {
+        for (auto &&arg : args)
         {
-            for (auto &&arg : args)
+            if (arg.getKey() == "ambient")
             {
-                if (arg.getKey() == "ambient")
-                {
-                    ambient = arg.getValues<float>();
-                }
-                if (arg.getKey() == "diffuse")
-                {
-                    diffuse = arg.getValues<float>();
-                }
-                if (arg.getKey() == "specular")
-                {
-                    specular = arg.getValues<float>();
-                }
-                if (arg.getKey() == "glossiness")
-                {
-                    glossiness = arg.getValue<int>();
-                }
+                ambient = arg.getValues<double>();
             }
-        };
-
-        Color24 kd(){
-            return diffuse;
-        }
-
-        static Material *Make(Arguments args) {
-            if (get<1>(args)[0].getValue<std::string>() == "blinn")
+            if (arg.getKey() == "diffuse")
             {
-                return new BlinnPhongMaterial(get<1>(args));
+                diffuse = arg.getValues<double>();
             }
-            else
+            if (arg.getKey() == "specular")
             {
-                return nullptr;
+                specular = arg.getValues<double>();
+            }
+            if (arg.getKey() == "mirror")
+            {
+                mirror = arg.getValues<double>();
+            }
+            if (arg.getKey() == "glossiness")
+            {
+                glossiness = arg.getValue<int>();
             }
         }
-        friend DerivedRegistrar<Material, BlinnPhongMaterial>;
+    };
+
+    Color24 ka()
+    {
+        return ambient;
+    }
+
+    Color24 kd()
+    {
+        return diffuse;
+    }
+
+    Color24 ks()
+    {
+        return specular;
+    }
+
+    Color24 km()
+    {
+        return mirror;
+    }
+
+    static Material *Make(Arguments args)
+    {
+        if (get<1>(args)[0].getValue<std::string>() == "blinn")
+        {
+            return new BlinnPhongMaterial(get<1>(args));
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    friend DerivedRegistrar<Material, BlinnPhongMaterial>;
 };
-
 
 #endif // __BLINNPHONGMATERIAL_H_

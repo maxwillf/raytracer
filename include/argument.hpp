@@ -17,22 +17,24 @@ private:
 
 public:
   Argument(const tinyxml2::XMLAttribute *attribute);
+  Argument(std::string argumentKey,
+           std::vector<std::string> values);
 
-  std::string getKey();
+    std::string getKey();
 
-  template <typename T>
-  T getValue(){};
+    template <typename T>
+    T getValue(){};
 
-  template <typename T>
-  std::vector<T> getValues(){};
+    template <typename T>
+    std::vector<T> getValues(){};
 
-  void print(){
-    std::cout << argumentKey << std::endl;
-    for (auto &&arg : values )
-    {
-      std::cout << arg << std::endl;
+    void print(){
+      std::cout << argumentKey << std::endl;
+      for (auto &&arg : values )
+      {
+        std::cout << arg << std::endl;
+      }
     }
-  }
 };
 
 Argument findAttribute(std::vector<Argument> attributes, std::string attrName);

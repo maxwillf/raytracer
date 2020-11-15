@@ -13,6 +13,12 @@ Argument::Argument(const tinyxml2::XMLAttribute *attribute)
   free(token);
 };
 
+Argument::Argument(std::string argumentKey, std::vector<std::string> values)
+{
+  this->argumentKey = argumentKey;
+  this->values = values;
+};
+
 std::string Argument::getKey()
 {
   return argumentKey;
@@ -36,7 +42,7 @@ Argument findAttribute(std::vector<Argument> attributes, std::string attrName)
   }
   else
   {
-    throw std::runtime_error("Attribute not found");
+    throw std::runtime_error("Attribute" + attrName + "not found");
   }
 }
 
@@ -46,7 +52,7 @@ int Argument::getValue<int>()
   return std::stoi(values[0]);
 }
 template <>
-float Argument::getValue<float>()
+double Argument::getValue<double>()
 {
   return std::stod(values[0]);
 }
@@ -65,12 +71,12 @@ std::vector<int> Argument::getValues<int>()
   return intValues;
 }
 template <>
-std::vector<float> Argument::getValues<float>()
+std::vector<double> Argument::getValues<double>()
 {
   std::vector<std::string> vals(values);
-  std::vector<float> floatValues;
-  std::transform(vals.begin(), vals.end(), std::back_inserter(floatValues), [](std::string str) { return std::stod(str); });
-  return floatValues;
+  std::vector<double> doubleValues;
+  std::transform(vals.begin(), vals.end(), std::back_inserter(doubleValues), [](std::string str) { return std::stod(str); });
+  return doubleValues;
 }
 template <>
 std::vector<std::string> Argument::getValues<std::string>()

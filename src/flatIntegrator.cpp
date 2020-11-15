@@ -4,7 +4,7 @@
 
 // This method must be overridden by all classes derived from SamplerIntegrator.
 /// Determines a color for the incoming ray.
-Color24 FlatIntegrator::Li(const Ray& ray, const Scene& scene, Color24 bkg_color ) const
+Color24 FlatIntegrator::Li(const Ray& ray, const Scene& scene, Color24 bkg_color, int depth ) const
 {
     Color24 L(0,0,0); // The radiance
     // Find closest ray intersection or return background radiance.

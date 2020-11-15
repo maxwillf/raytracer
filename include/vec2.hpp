@@ -18,47 +18,47 @@
 
 class vec2
 {
-    public:
-        vec2() {}
-        vec2(std::vector<float> vec)
+public:
+    vec2() {}
+    vec2(std::vector<double> vec)
+    {
+        if (vec.size() == 2)
         {
-            if (vec.size() == 2)
-            {
-                e[0] = vec[0];
-                e[1] = vec[1];
-            }
-            else
-            {
-                throw std::runtime_error("Vector cannot be converted to vec2");
-            }
+            e[0] = vec[0];
+            e[1] = vec[1];
         }
-        vec2(float e0, float e1)
+        else
         {
-            e[0] = e0;
-            e[1] = e1;
+            throw std::runtime_error("Vector cannot be converted to vec2");
         }
-        inline float x() const { return e[0]; }
-        inline float y() const { return e[1]; }
+    }
+    vec2(double e0, double e1)
+    {
+        e[0] = e0;
+        e[1] = e1;
+    }
+    inline double x() const { return e[0]; }
+    inline double y() const { return e[1]; }
 
-        inline const vec2 &operator+() const { return *this; }
-        inline vec2 operator-() const { return vec2(-e[0], -e[1]); }
-        inline float operator[](int i) const { return e[i]; }
-        inline float &operator[](int i) { return e[i]; }
+    inline const vec2 &operator+() const { return *this; }
+    inline vec2 operator-() const { return vec2(-e[0], -e[1]); }
+    inline double operator[](int i) const { return e[i]; }
+    inline double &operator[](int i) { return e[i]; }
 
-        inline vec2 &operator+=(const vec2 &v2);
-        inline vec2 &operator-=(const vec2 &v2);
-        inline vec2 &operator*=(const vec2 &v2);
-        inline vec2 &operator/=(const vec2 &v2);
-        inline vec2 &operator*=(const float t);
-        inline vec2 &operator/=(const float t);
-        inline bool operator==(vec2 const &v) const;
-        inline bool operator!=(vec2 const &v) const;
+    inline vec2 &operator+=(const vec2 &v2);
+    inline vec2 &operator-=(const vec2 &v2);
+    inline vec2 &operator*=(const vec2 &v2);
+    inline vec2 &operator/=(const vec2 &v2);
+    inline vec2 &operator*=(const double t);
+    inline vec2 &operator/=(const double t);
+    inline bool operator==(vec2 const &v) const;
+    inline bool operator!=(vec2 const &v) const;
 
-        inline float length() const { return sqrt(e[0] * e[0] + e[1] * e[1]); }
-        inline float squared_length() const { return e[0] * e[0] + e[1] * e[1]; }
-        inline void make_unit_vector();
+    inline double length() const { return sqrt(e[0] * e[0] + e[1] * e[1]); }
+    inline double squared_length() const { return e[0] * e[0] + e[1] * e[1]; }
+    inline void make_unit_vector();
 
-        float e[3];
+    double e[3];
 };
 
 inline std::istream &operator>>(std::istream &is, vec2 &t)
@@ -75,7 +75,7 @@ inline std::ostream &operator<<(std::ostream &os, const vec2 &t)
 
 inline void vec2::make_unit_vector()
 {
-    float k = 1.0 / sqrt(e[0] * e[0] + e[1] * e[1]);
+    double k = 1.0 / sqrt(e[0] * e[0] + e[1] * e[1]);
     e[0] *= k;
     e[1] *= k;
 }
@@ -100,22 +100,22 @@ inline vec2 operator/(const vec2 &v1, const vec2 &v2)
     return vec2(v1.e[0] / v2.e[0], v1.e[1] / v2.e[1]);
 }
 
-inline vec2 operator*(float t, const vec2 &v)
+inline vec2 operator*(double t, const vec2 &v)
 {
     return vec2(t * v.e[0], t * v.e[1]);
 }
 
-inline vec2 operator/(vec2 v, float t)
+inline vec2 operator/(vec2 v, double t)
 {
     return vec2(v.e[0] / t, v.e[1] / t);
 }
 
-inline vec2 operator*(const vec2 &v, float t)
+inline vec2 operator*(const vec2 &v, double t)
 {
     return vec2(t * v.e[0], t * v.e[1]);
 }
 
-inline float dot(const vec2 &v1, const vec2 &v2)
+inline double dot(const vec2 &v1, const vec2 &v2)
 {
     return v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2];
 }
@@ -155,16 +155,16 @@ inline vec2 &vec2::operator-=(const vec2 &v)
     return *this;
 }
 
-inline vec2 &vec2::operator*=(const float t)
+inline vec2 &vec2::operator*=(const double t)
 {
     e[0] *= t;
     e[1] *= t;
     return *this;
 }
 
-inline vec2 &vec2::operator/=(const float t)
+inline vec2 &vec2::operator/=(const double t)
 {
-    float k = 1.0f / t;
+    double k = 1.0f / t;
 
     e[0] *= k;
     e[1] *= k;
@@ -185,12 +185,12 @@ inline bool vec2::operator==(vec2 const &v) const
 
 inline bool vec2::operator!=(vec2 const &v) const
 {
-  return !(*this == v);
+    return !(*this == v);
 }
 
 inline vec2 unit_vector(vec2 v)
 {
-  return v / v.length();
+    return v / v.length();
 }
 
 using Point2 = vec2;
