@@ -61,6 +61,11 @@ public:
         return mirror;
     }
 
+    double g()
+    {
+        return glossiness;
+    }
+
     static Material *Make(Arguments args)
     {
         if (get<1>(args)[0].getValue<std::string>() == "blinn")

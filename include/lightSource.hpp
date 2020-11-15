@@ -148,6 +148,47 @@ public:
     friend DerivedRegistrar<LightSource, LightSource>;
 };
 
+class PointLight : public LightSource
+{
+
+public:
+    int flux;
+    vec3 scale;
+    vec3 from;
+    PointLight(std::vector<Argument> args)
+    {
+        for (auto &&arg : args)
+        {
+            if (arg.getKey() == "I")
+            {
+                L = arg.getValues<double>();
+            }
+            if (arg.getKey() == "scale")
+            {
+                scale = arg.getValues<double>();
+            }
+            if (arg.getKey() == "from")
+            {
+                from = arg.getValues<double>();
+            }
+        }
+    };
+    //
+    static LightSource *Make(Arguments args)
+    {
+
+        if (get<1>(args)[0].getValue<std::string>() == "point")
+        {
+            return new PointLight(get<1>(args));
+        }
+        else
+        {
+            return nullptr;
+        }
+    };
+    friend DerivedRegistrar<LightSource, LightSource>;
+};
+
 inline bool is_ambient(shared_ptr<LightSource> source)
 {
     auto ambientLight = std::dynamic_pointer_cast<AmbientLight>(source);

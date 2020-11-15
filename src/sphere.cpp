@@ -1,6 +1,34 @@
 #include "include/sphere.hpp"
 #include "include/surfel.hpp"
 
+bool Sphere::intersect_p(const Ray &r) const
+{
+    vec3 oc = r.origin() - center;
+    double a = dot(r.direction(), r.direction());
+    double b = 2.0 * dot(oc, r.direction());
+    double c = dot(oc, oc) - radius * radius;
+    double discrimant = b * b - 4 * a * c;
+    if (discrimant < 0)
+    {
+        return false;
+    }
+    else
+    {
+        double ocd = dot(oc, r.direction());
+        double delta_exp1 = ocd * ocd;
+        double delta_exp2 = a * (dot(oc, oc)) - radius * radius;
+        double delta = sqrt(delta_exp1 - delta_exp2);
+        double t1 = ((dot(-oc, r.direction())) - delta) / a;
+        double t2 = ((dot(-oc, r.direction())) + delta) / a;
+        double t = t1 < t2 ? t1 : t2;
+        if (t < r.tMax && t >= r.tMin)
+        {
+            r.tMax = t;
+            return true;
+        }
+        return false;
+    }
+};
 bool Sphere::intersect(const Ray &r, Surfel *sf) const
 {
     // stub

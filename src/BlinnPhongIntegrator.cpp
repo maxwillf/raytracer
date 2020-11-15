@@ -2,6 +2,7 @@
 #include "include/BlinnPhongMaterial.hpp"
 #include "include/lightSource.hpp"
 #include <algorithm>
+#include <cmath>
 #include <tuple>
 
 Color24 BlinnPhongIntegrator::Li(const Ray &ray, const Scene &scene, Color24 bkg, int depth) const
@@ -13,10 +14,11 @@ Color24 BlinnPhongIntegrator::Li(const Ray &ray, const Scene &scene, Color24 bkg
     {
         L = bkg;
         return L;
+        // return depth == 0 ? L : L / 255.0;
     }
     else
     {
-        double epsilon = 0.5;
+        double epsilon = 0.05;
         BlinnPhongMaterial *bm = static_cast<BlinnPhongMaterial *>(isect.primitive->material_get().get());
         // if there is an ambient light
         if (scene.ambientLight)
@@ -36,30 +38,54 @@ Color24 BlinnPhongIntegrator::Li(const Ray &ray, const Scene &scene, Color24 bkg
         {
             //L = bm->kd() * light->L;
             auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light);
-            // Surfel shadowLightSurfel;
-            // Ray lightShadowRay = Ray(isect.p, unit_vector(directionalLight->from - isect.p));
-            // lightShadowRay.tMax = 1;
-            // if (!scene.intersect(lightShadowRay, &shadowLightSurfel))
-            // {
-            vec3 wo = unit_vector(-directionalLight->direction);
-            L = L + (bm->kd() * directionalLight->L * std::max(0.0, dot(unit_vector(isect.n), wo)));
-            // }
-            // else
-            // {
-            //     return vec3(0, 0, 0);
-            // }
+            if (directionalLight)
+            {
+                vec3 wi = unit_vector(directionalLight->from - isect.p);
+                //                vec3 wi = unit_vector(directionalLight->direction);
+                Ray lightShadowRay = Ray(isect.p + wi * epsilon, wi);
+                lightShadowRay.tMax = 1;
+                if (!scene.intersect_p(lightShadowRay))
+                {
+                    vec3 wo = unit_vector(-directionalLight->direction);
+                    //vec3 h = ray.direction() + directionalLight->direction / (ray.direction() + directionalLight->direction).length();
+                    //vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
+                    vec3 h = -unit_vector(ray.direction() + directionalLight->direction);
+                    // vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
+                    L += bm->kd() * directionalLight->L * std::max(0.0, dot(isect.n, wo));
+                    // std::cout << dot(isect.n, h) << std::endl;
+                    // L += bm->ks() * directionalLight->L * pow(std::max(0.0, dot(isect.n, h)), bm->g());
+                }
+            }
+
+            auto pointLight = std::dynamic_pointer_cast<PointLight>(light);
+            if (pointLight)
+            {
+                vec3 wi = unit_vector(pointLight->from - isect.p);
+                Ray lightShadowRay = Ray(isect.p + wi * epsilon, wi);
+                lightShadowRay.tMax = 1;
+                if (!scene.intersect_p(lightShadowRay))
+                {
+                    vec3 wo = unit_vector(wi);
+                    //vec3 h = ray.direction() + directionalLight->direction / (ray.direction() + directionalLight->direction).length();
+                    //vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
+                    // vec3 h = -unit_vector(ray.direction() + directionalLight->direction);
+                    // vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
+                    L += bm->kd() * pointLight->L * std::max(0.0, dot(isect.n, wo));
+                    // std::cout << dot(isect.n, h) << std::endl;
+                    // L += bm->ks() * directionalLight->L * pow(std::max(0.0, dot(isect.n, h)), bm->g());
+                }
+            }
         }
         // if (depth < this->max_depth)
         // {
         //     vec3 reflectedRayDirection = ray.direction() - (2 * dot(ray.direction(), isect.n) * isect.n);
         //     Ray reflectedRay = Ray(ray.origin() + reflectedRayDirection * epsilon, reflectedRayDirection);
-        //     L = L + bm->km() * Li(reflectedRay, scene, bkg, depth + 1);
+        //     L += bm->km() * Li(reflectedRay, scene, bkg, depth + 1);
         //     // stub
         //     //        L = bm->kd * light_I * std::max( 0.f, Dot( n, l ) );
         // }
-        // //return L;
-        // return depth == 0 ? L * vec3(255, 255, 255) : L;
-        return L * vec3(255, 255, 255);
+        return depth == 0 ? L * vec3(255, 255, 255) : L;
+        // return L * vec3(255, 255, 255);
     }
 }
 // [0] FIRST STEP TO INITIATE `L` WITH THE COLOR VALUE TO BE RETURNED.
