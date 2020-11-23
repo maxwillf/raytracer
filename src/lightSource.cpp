@@ -6,3 +6,4 @@ DerivedRegistrar<LightSource, LightSource> __initLightSource;
 DerivedRegistrar<LightSource, AmbientLight> __initAmbientLight;
 DerivedRegistrar<LightSource, DirectionalLight> __initDirectionalLight;
 DerivedRegistrar<LightSource, PointLight> __initPointLight;
+DerivedRegistrar<LightSource, SpotLight> __initSpotLight;

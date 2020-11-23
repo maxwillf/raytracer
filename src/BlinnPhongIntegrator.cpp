@@ -36,7 +36,25 @@ Color24 BlinnPhongIntegrator::Li(const Ray &ray, const Scene &scene, Color24 bkg
         // return L * vec3(255, 255, 255);
         for (auto &&light : scene.lights)
         {
-            //L = bm->kd() * light->L;
+            auto pointLight = std::dynamic_pointer_cast<PointLight>(light);
+            if (pointLight)
+            {
+                vec3 wi = unit_vector(pointLight->from - isect.p);
+                Ray lightShadowRay = Ray(isect.p + wi * epsilon, wi);
+                lightShadowRay.tMax = 1;
+                if (!scene.intersect_p(lightShadowRay))
+                {
+                    vec3 wo = unit_vector(wi);
+                    //vec3 h = ray.direction() + directionalLight->direction / (ray.direction() + directionalLight->direction).length();
+                    //vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
+                    // vec3 h = -unit_vector(ray.direction() + directionalLight->direction);
+                    // vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
+                    L += bm->kd() * pointLight->L * std::max(0.0, dot(isect.n, wo));
+                    // std::cout << dot(isect.n, h) << std::endl;
+                    // L += bm->ks() * directionalLight->L * pow(std::max(0.0, dot(isect.n, h)), bm->g());
+                }
+            }
+
             auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light);
             if (directionalLight)
             {
@@ -57,20 +75,42 @@ Color24 BlinnPhongIntegrator::Li(const Ray &ray, const Scene &scene, Color24 bkg
                 }
             }
 
-            auto pointLight = std::dynamic_pointer_cast<PointLight>(light);
-            if (pointLight)
+            auto spotLight = std::dynamic_pointer_cast<SpotLight>(light);
+            if (spotLight)
             {
-                vec3 wi = unit_vector(pointLight->from - isect.p);
+                vec3 wi = unit_vector(spotLight->from - isect.p);
                 Ray lightShadowRay = Ray(isect.p + wi * epsilon, wi);
+                // vec3 wi = unit_vector(spotLight->from - isect.p);
+                // Ray lightShadowRay = Ray(isect.p + wi * epsilon, wi);
                 lightShadowRay.tMax = 1;
                 if (!scene.intersect_p(lightShadowRay))
                 {
-                    vec3 wo = unit_vector(wi);
-                    //vec3 h = ray.direction() + directionalLight->direction / (ray.direction() + directionalLight->direction).length();
-                    //vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
-                    // vec3 h = -unit_vector(ray.direction() + directionalLight->direction);
-                    // vec3 h = -unit_vector(unit_vector(ray.origin() - isect.p) + (wi));
-                    L += bm->kd() * pointLight->L * std::max(0.0, dot(isect.n, wo));
+                    // vec3 wo = unit_vector(wi);
+                    vec3 wo = unit_vector(-spotLight->direction);
+                    //vec3 wo = unit_vector(wi);
+                    // double cosAngle = dot(spotLight->direction, wi) * 100;
+                    double cosAngle = std::abs(dot(spotLight->direction, wi)) * 100;
+                    // maybe do 1 - cosAngle ??? idk
+                    //std::cout << cosAngle << std::endl;
+                    auto spotL = spotLight->L;
+                    if (cosAngle > spotLight->cutoff)
+                    {
+                        continue;
+                        // spotL *= 0;
+                    }
+                    else if (spotLight->falloff < cosAngle && cosAngle < spotLight->cutoff)
+                    {
+                        double newMaxAngle = spotLight->cutoff - spotLight->falloff;
+                        double falloffL = ((cosAngle - spotLight->falloff) / newMaxAngle);
+                        // double falloffL = 100 * cosAngle / newMaxAngle;
+                        spotL *= falloffL;
+                    }
+                    else if (cosAngle < spotLight->falloff)
+                    {
+                        // do nothing
+                    }
+                    L += bm->kd() * spotL * std::max(0.0, dot(isect.n, wo));
+                    // L += bm->kd() * spotLight->L * std::max(0.0, dot(isect.n, wo));
                     // std::cout << dot(isect.n, h) << std::endl;
                     // L += bm->ks() * directionalLight->L * pow(std::max(0.0, dot(isect.n, h)), bm->g());
                 }

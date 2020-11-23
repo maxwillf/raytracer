@@ -189,6 +189,56 @@ public:
     friend DerivedRegistrar<LightSource, LightSource>;
 };
 
+class SpotLight : public LightSource
+{
+public:
+    vec3 scale;
+    vec3 from;
+    vec3 to;
+    vec3 direction;
+    double cutoff;
+    double falloff;
+    SpotLight(std::vector<Argument> args)
+    {
+        for (auto &&arg : args)
+        {
+            if (arg.getKey() == "I")
+            {
+                L = arg.getValues<double>();
+            }
+            if (arg.getKey() == "scale")
+            {
+                scale = arg.getValues<double>();
+            }
+            if (arg.getKey() == "cutoff")
+            {
+                cutoff = arg.getValue<double>();
+            }
+            if (arg.getKey() == "falloff")
+            {
+                falloff = arg.getValue<double>();
+            }
+            to = findAttribute(args, "to").getValues<double>();
+            from = findAttribute(args, "from").getValues<double>();
+            direction = unit_vector(to - from);
+        }
+    };
+    //
+    static LightSource *Make(Arguments args)
+    {
+
+        if (get<1>(args)[0].getValue<std::string>() == "spot")
+        {
+            return new SpotLight(get<1>(args));
+        }
+        else
+        {
+            return nullptr;
+        }
+    };
+    friend DerivedRegistrar<LightSource, LightSource>;
+};
+
 inline bool is_ambient(shared_ptr<LightSource> source)
 {
     auto ambientLight = std::dynamic_pointer_cast<AmbientLight>(source);
