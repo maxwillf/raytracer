@@ -19,7 +19,7 @@ Argument::Argument(std::string argumentKey, std::vector<std::string> values)
   this->values = values;
 };
 
-std::string Argument::getKey()
+std::string Argument::getKey() const
 {
   return argumentKey;
 }
@@ -47,23 +47,23 @@ Argument findAttribute(std::vector<Argument> attributes, std::string attrName)
 }
 
 template <>
-int Argument::getValue<int>()
+int Argument::getValue<int>() const
 {
   return std::stoi(values[0]);
 }
 template <>
-double Argument::getValue<double>()
+double Argument::getValue<double>() const
 {
   return std::stod(values[0]);
 }
 template <>
-std::string Argument::getValue<std::string>()
+std::string Argument::getValue<std::string>() const
 {
   return values[0];
 }
 
 template <>
-std::vector<int> Argument::getValues<int>()
+std::vector<int> Argument::getValues<int>() const
 {
   std::vector<std::string> vals(values);
   std::vector<int> intValues;
@@ -71,7 +71,7 @@ std::vector<int> Argument::getValues<int>()
   return intValues;
 }
 template <>
-std::vector<double> Argument::getValues<double>()
+std::vector<double> Argument::getValues<double>() const
 {
   std::vector<std::string> vals(values);
   std::vector<double> doubleValues;
@@ -79,7 +79,7 @@ std::vector<double> Argument::getValues<double>()
   return doubleValues;
 }
 template <>
-std::vector<std::string> Argument::getValues<std::string>()
+std::vector<std::string> Argument::getValues<std::string>() const
 {
   return values;
 }

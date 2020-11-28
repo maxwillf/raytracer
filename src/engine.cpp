@@ -5,6 +5,7 @@
 #include "include/BlinnPhongIntegrator.hpp"
 #include "include/scene.hpp"
 #include "include/lightSource.hpp"
+#include "include/triangle.hpp"
 #include <memory>
 #include <unordered_map>
 
@@ -60,18 +61,35 @@ void Engine::run()
     }
     if (tagName == "object")
     {
+      std::string type = findAttribute(constructionArguments, "type").getValue<std::string>();
       // changes needed in order to allow translate tags
-      if (findAttribute(constructionArguments, "type").getValue<std::string>() == "sphere")
+      if (type == "sphere")
       {
         constructionArguments.push_back(Argument("center", translateArg.getValues<std::string>()));
         //constructionArguments.push_back(Argument("center",{currentTranslate.toString()}));
         produceArgs = std::make_tuple(tagName, constructionArguments);
       }
-
-      auto obj =
-          std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs));
-      obj->setMaterial(currentMaterial);
-      aggregate->addPrimitive(obj);
+      // else if (findAttribute(constructionArguments, "type").getValue<std::string>() == "trianglemesh")
+      // {
+      //   // constructionArguments.push_back(Argument("center", translateArg.getValues<std::string>()));
+      //   //constructionArguments.push_back(Argument("center",{currentTranslate.toString()}));
+      //   produceArgs = std::make_tuple(tagName, constructionArguments);
+      // }
+      if (type == "trianglemesh")
+      {
+        auto triangles = create_triangle_mesh_primitive(false, constructionArguments);
+        for (auto &&triangle : triangles)
+        {
+          triangle->setMaterial(namedMaterials.at(findAttribute(constructionArguments, "material").getValue<std::string>()));
+          aggregate->addPrimitive(triangle);
+        }
+      }
+      else
+      {
+        auto obj = std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs));
+        obj->setMaterial(currentMaterial);
+        aggregate->addPrimitive(obj);
+      }
       //        obj_list.push_back(std::shared_ptr<Primitive>(Factory<Primitive, Arguments>::Produce(produceArgs)));
     }
     if (tagName == "world_end")
@@ -125,15 +143,6 @@ void Engine::run()
       {
         lights.push_back(lightPtr);
       }
-      // if (equal)
-      // {
-      //   ambientLight = std::dynamic_pointer_cast<AmbientLight>(lightPtr);
-      // }
-      // else
-      // {
-      //   lights.push_back(
-      //       lightPtr);
-      // }
     }
   }
 }
