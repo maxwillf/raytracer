@@ -80,7 +80,8 @@ void Engine::run()
         auto triangles = create_triangle_mesh_primitive(false, constructionArguments);
         for (auto &&triangle : triangles)
         {
-          triangle->setMaterial(namedMaterials.at(findAttribute(constructionArguments, "material").getValue<std::string>()));
+          //triangle->setMaterial(namedMaterials.at(findAttribute(constructionArguments, "material").getValue<std::string>()));
+          triangle->setMaterial(currentMaterial);
           aggregate->addPrimitive(triangle);
         }
       }
