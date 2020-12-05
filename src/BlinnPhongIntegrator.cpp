@@ -1,6 +1,8 @@
 #include "include/BlinnPhongIntegrator.hpp"
 #include "include/BlinnPhongMaterial.hpp"
 #include "include/lightSource.hpp"
+#include "include/bvh_node.hpp"
+#include "include/aggregate.hpp"
 #include <algorithm>
 #include <cmath>
 #include <tuple>
@@ -127,6 +129,18 @@ Color24 BlinnPhongIntegrator::Li(const Ray &ray, const Scene &scene, Color24 bkg
         return depth == 0 ? L * vec3(255, 255, 255) : L;
         // return L * vec3(255, 255, 255);
     }
+}
+void BlinnPhongIntegrator::preprocess(const Scene &scene)
+{
+    // bvh_node(
+    //     const std::vector<shared_ptr<Primitive>> &src_objects,
+    //     size_t start, size_t end, double time0, double time1);
+    const shared_ptr<Aggregate> aggregate = std::dynamic_pointer_cast<Aggregate>(scene.aggregate);
+    std::vector<shared_ptr<Primitive>> primitives = aggregate->getPrimitives();
+    scene.accelerator =
+        make_shared<bvh_node>(primitives, 0, primitives.size(), 0, 0);
+    std::cout << "setted accelerator" << std::endl;
+    //    scene.aggregate = bvh_node(scene.aggregate,0, scene.aggregate)
 }
 // [0] FIRST STEP TO INITIATE `L` WITH THE COLOR VALUE TO BE RETURNED.
 // [1] FIND CLOSEST RAY INTERSECTION OR RETURN BACKGROUND RADIANCE

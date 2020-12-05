@@ -26,6 +26,8 @@ public:
     {
     }
 
+    void preprocess(const Scene &scene);
+
     static Integrator *Make(Arguments args)
     {
         if (get<1>(args)[0].getValue<std::string>() == "blinn_phong")
