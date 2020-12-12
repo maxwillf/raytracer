@@ -53,23 +53,38 @@ bool bvh_node::bounding_box(double time0, double time1, aabb &output_box) const
 
 bool bvh_node::intersect(const Ray &r, Surfel *rec) const
 {
-    if (!box.hit(r))
+    if (!box.hit(r, r.tMin, r.tMax))
         return false;
 
     bool hit_left = left->intersect(r, rec);
-    Ray rightRay = Ray(r.origin(), r.direction());
-    rightRay.tMax = hit_left ? rec->t : r.tMax;
-    bool hit_right = right->intersect(rightRay, rec);
+    // Ray rightRay = Ray(r.origin(), r.direction());
+    // rightRay.tMax = hit_left ? rec->t : r.tMax;
+    //bool hit_right = right->intersect(rightRay, rec);
+    bool hit_right = right->intersect(r, rec);
+    bool hit = hit_left || hit_right;
+    if (hit)
+    {
+        int x = 2;
+    }
 
-    return hit_left || hit_right;
+    return hit;
 }
 
 bool bvh_node::intersect_p(const Ray &r) const
 {
-    if (!box.hit(r))
+    if (!box.hit(r, r.tMin, r.tMax))
         return false;
 
     bool hit_left = left->intersect_p(r);
     bool hit_right = right->intersect_p(r);
     return hit_left || hit_right;
 }
+
+// void bvh_node::debugPrint()
+// {
+//     // BlinnPhongMaterial *bm = static_cast<BlinnPhongMaterial *>(isect.primitive->material_get().get());
+//     if (left != nullptr)
+//     {
+//         debugPrint(left);
+//     }
+// }

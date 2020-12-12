@@ -137,6 +137,7 @@ void BlinnPhongIntegrator::preprocess(const Scene &scene)
     //     size_t start, size_t end, double time0, double time1);
     const shared_ptr<Aggregate> aggregate = std::dynamic_pointer_cast<Aggregate>(scene.aggregate);
     std::vector<shared_ptr<Primitive>> primitives = aggregate->getPrimitives();
+    // debug
     scene.accelerator =
         make_shared<bvh_node>(primitives, 0, primitives.size(), 0, 0);
     std::cout << "setted accelerator" << std::endl;

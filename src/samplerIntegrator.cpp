@@ -23,20 +23,12 @@ void SamplerIntegrator::render(const Scene &scene)
             // Get the background color in case we hit nothing.
             //            Point2 screen_coord{ double(x)/double(xres), double(y)/double(yres) };
             Ray ray = camera->generate_ray(x, y); // Generate the ray from (x,y)
-            if (x == xres - 1 && y == yres - 1)
-            {
-                int x = 0;
-            }
             Color24 L_background = scene.background->getColor(i, j, ray);
             // Determine the ray for the current camera type.
             // Determine the incoming light.
             // std::cout << "x and y: " << x << " " << y << std::endl;
             // std::cout << "ray direction: " << ray.direction() << std::endl;
             Color24 L = Li(ray, scene, L_background);
-            if (x == 0 && y == 0)
-            {
-                int z = 0;
-            }
             // Add color (radiance) to the image.
             camera->film->setPoint(x, y, L); // Set color of pixel (x,y) to L.
         }

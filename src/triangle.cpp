@@ -126,8 +126,8 @@ create_triangle_mesh_primitive(bool flip_normals, const std::vector<Argument> &p
         int nTriangles = findAttribute(ps, "ntriangles").getValue<int>();
         mesh->n_triangles = nTriangles;
         std::vector<int> indices = findAttribute(ps, "indices").getValues<int>();
-        std::vector<int> vertex_ints = findAttribute(ps, "vertices").getValues<int>();
-        std::vector<int> normal_ints = findAttribute(ps, "normals").getValues<int>();
+        std::vector<double> vertex_ints = findAttribute(ps, "vertices").getValues<double>();
+        std::vector<double> normal_ints = findAttribute(ps, "normals").getValues<double>();
         // std::vector<int> uvcoord_ints = findAttribute(ps, "uv").getValues<int>();
         std::vector<vec3> vertices = {};
         std::vector<vec3> normals = {};
@@ -140,8 +140,8 @@ create_triangle_mesh_primitive(bool flip_normals, const std::vector<Argument> &p
         for (size_t i = 0; i < vSize; i++)
         {
 
-            int *currVertex = &vertex_ints[i * 3];
-            int *currNormal = &normal_ints[i * 3];
+            double *currVertex = &vertex_ints[i * 3];
+            double *currNormal = &normal_ints[i * 3];
             vertices.push_back(vec3(currVertex[0], currVertex[1], currVertex[2]));
             normals.push_back(vec3(currNormal[0], currNormal[1], currNormal[2]));
         }
@@ -411,12 +411,12 @@ bool Triangle::bounding_box(double time0, double time1, aabb &output_box) const
     vec3 v0 = mesh->vertices[v[0]];
     vec3 v1 = mesh->vertices[v[1]];
     vec3 v2 = mesh->vertices[v[2]];
-    int xmin = std::min(std::min(v0[0], v1[0]), v2[0]);
-    int ymin = std::min(std::min(v0[1], v1[1]), v2[1]);
-    int zmin = std::min(std::min(v0[2], v1[2]), v2[2]);
-    int xmax = std::max(std::max(v0[0], v1[0]), v2[0]);
-    int ymax = std::max(std::max(v0[1], v1[1]), v2[1]);
-    int zmax = std::max(std::max(v0[2], v1[2]), v2[2]);
+    double xmin = std::min(std::min(v0[0], v1[0]), v2[0]);
+    double ymin = std::min(std::min(v0[1], v1[1]), v2[1]);
+    double zmin = std::min(std::min(v0[2], v1[2]), v2[2]);
+    double xmax = std::max(std::max(v0[0], v1[0]), v2[0]);
+    double ymax = std::max(std::max(v0[1], v1[1]), v2[1]);
+    double zmax = std::max(std::max(v0[2], v1[2]), v2[2]);
     output_box = aabb(
         vec3(xmin, ymin, zmin), vec3(xmax, ymax, zmax));
     return true;

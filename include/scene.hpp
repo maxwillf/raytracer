@@ -18,8 +18,8 @@ public:
 	//std::vector<shared_ptr<Light>> lights; // list of lights
 	std::shared_ptr<Background> background; // The background object.
 	std::vector<shared_ptr<LightSource>> lights = std::vector<shared_ptr<LightSource>>();
-	std::shared_ptr<Primitive> aggregate;		   // The scene graph of objects, acceleration structure.
-	mutable std::shared_ptr<bvh_node> accelerator; // The scene graph of objects, acceleration structure.
+	std::shared_ptr<Primitive> aggregate;					 // The scene graph of objects, acceleration structure.
+	mutable std::shared_ptr<bvh_node> accelerator = nullptr; // The scene graph of objects, acceleration structure.
 
 private:
 	//=== Public interface

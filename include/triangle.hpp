@@ -118,7 +118,9 @@ public:
             }
         }
         if (a > -EPSILON && a < EPSILON)
+        {
             return false; // This ray is parallel to this triangle.
+        }
         f = 1.0 / a;
         s = ray.origin() - vertex0;
         u = f * dot(s, h);
@@ -144,6 +146,10 @@ public:
                 *isect = Surfel(p, unit_vector(mesh->normals[n[0]]), -ray.direction(), 0.0, Point2(0, 0), this);
                 //*isect = Surfel(p, unit_vector(p - center), -ray.direction(), 0.0, Point2(0, 0), this);
                 return true;
+            }
+            else
+            {
+                return false;
             }
         }
         else // This means that there is a line intersection but not a ray intersection.
